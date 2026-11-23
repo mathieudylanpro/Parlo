@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parlo — anglais, espagnol, italien</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1d2433;--mut:#667085;--card:#fff;--line:#e2e2da;--acc:#2f6f5e;--accfg:#fff;--ok:#dff3e4;--okfg:#14532d;--bad:#fde3e1;--badfg:#7f1d1d}
+@media(prefers-color-scheme:dark){:root{--bg:#14171c;--fg:#eceff4;--mut:#9aa4b2;--card:#1d222a;--line:#2c333d;--acc:#6fcfb0;--accfg:#0d1f19;--ok:#16392a;--okfg:#c9f2d8;--bad:#43201f;--badfg:#ffd4d0}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+#app{max-width:560px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{padding:28px 20px 8px}
+.top h1{margin:0;font-size:28px}
+.sub{margin:4px 0 0;color:var(--mut);font-size:15px}
+.tabs{display:flex;gap:8px;padding:12px 20px}
+.tab{flex:1;padding:12px;border:1.5px solid var(--line);background:var(--card);border-radius:12px;font-weight:600}
+.tab.on{border-color:var(--acc);background:var(--acc);color:var(--accfg)}
+.btn{padding:13px 18px;border:0;border-radius:12px;background:var(--acc);color:var(--accfg);font-weight:700}
+.btn.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.4;cursor:default}
+#app>.btn.wide{width:auto;margin:4px 20px 8px}
+.units{padding:8px 20px 12px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;align-items:center}
+.num{width:40px;height:40px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);display:grid;place-items:center;font-weight:700}
+.ct{display:flex;flex-direction:column}
+.ct span{color:var(--mut);font-size:14px}
+.acts{grid-column:1/-1;display:flex;gap:8px;margin-top:8px}
+.acts .btn{flex:1;padding:10px}
+.foot-note{padding:8px 20px 28px;color:var(--mut);font-size:14px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.link{background:none;border:0;color:var(--mut);text-decoration:underline;padding:8px 0;font-size:14px}
+.bar{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.x{background:none;border:0;font-size:26px;line-height:1;padding:4px 8px;color:var(--mut)}
+.prog{flex:1;height:10px;background:var(--line);border-radius:9px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--acc);transition:width .25s}
+.stage{flex:1;padding:8px 20px 20px;display:flex;flex-direction:column;gap:16px}
+.stage.scroll{overflow:auto}
+.stage h2{margin:0}
+.note{margin:0;padding:10px 12px;background:var(--card);border-left:4px solid var(--acc);border-radius:8px;color:var(--mut);font-size:15px}
+.ask{margin:0;color:var(--mut);font-size:15px}
+.prompt{font-size:26px;font-weight:700;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{padding:15px;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px}
+.opt.good{background:var(--ok);border-color:var(--okfg);color:var(--okfg)}
+.opt.wrong{background:var(--bad);border-color:var(--badfg);color:var(--badfg)}
+.opt:disabled:not(.good):not(.wrong){opacity:.55}
+.spk{background:var(--card);border:1.5px solid var(--line);border-radius:50%;width:42px;height:42px;font-size:18px;flex:none}
+.big-spk{align-self:center;width:96px;height:96px;border-radius:50%;border:0;background:var(--acc);color:var(--accfg);font-size:40px}
+.txt{width:100%;padding:14px;font-size:20px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg)}
+.chars{display:flex;gap:6px;flex-wrap:wrap}
+.chars button{padding:8px 12px;background:var(--card);border:1.5px solid var(--line);border-radius:10px}
+.ans{min-height:58px;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px;align-content:flex-start}
+.bank{display:flex;flex-wrap:wrap;gap:8px}
+.tile{padding:10px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:10px;font-size:18px}
+.tile.ghostt{visibility:hidden}
+.foot{padding:14px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;position:sticky;bottom:0;background:var(--bg)}
+.foot:empty{display:none}
+.foot.ok{background:var(--ok);color:var(--okfg)}
+.foot.bad{background:var(--bad);color:var(--badfg)}
+.foot.ok .btn{background:var(--okfg);color:var(--ok)}
+.foot.bad .btn{background:var(--badfg);color:var(--bad)}
+.msg{display:flex;flex-direction:column;gap:2px}
+.msg .ex{font-size:14px;opacity:.85}
+.vocab{display:flex;flex-direction:column;gap:8px}
+.vrow{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px}
+.vrow div{display:flex;flex-direction:column}
+.vrow span{color:var(--mut);font-size:15px}
+.res{text-align:center;padding-top:30px}
+.res .big{font-size:56px;font-weight:800;color:var(--acc)}
+.miss{text-align:left;display:flex;flex-direction:column;gap:6px}
+.lvl{margin:14px 0 0;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+.pad{padding:4px 20px 8px}
+.spkgrp{display:flex;gap:6px;flex:none}
+.row{display:flex;gap:16px;justify-content:center}
+.big-spk.sm{width:72px;height:72px;font-size:30px}
+.big-spk.slow{background:var(--card);color:var(--fg);border:1.5px solid var(--line)}
+.prompt.sm{font-size:22px;line-height:1.35}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col{display:flex;flex-direction:column;gap:10px}
+.opt.sm{font-size:15px;padding:12px 10px}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.sub{margin:0;color:var(--mut);font-size:15px}
+
+.toprow{display:flex;justify-content:space-between;align-items:center}
+.oral{display:flex;gap:8px;padding:4px 20px 8px}
+.oral .btn{flex:1;padding:11px 8px}
+.btn.bac{background:#9a3b1f;color:#fff;margin:4px 20px 8px}
+.heard{min-height:24px;margin:8px 0;color:var(--fg);font-style:italic}
+.mic{width:100%;padding:16px;border-radius:14px;border:2px solid var(--acc);background:var(--card);font-weight:700}
+.mic.on{background:var(--bad);border-color:var(--badfg);color:var(--badfg)}
+.micbox{display:flex;flex-direction:column;gap:6px}
+.speakarea{display:flex;flex-direction:column;gap:12px}
+.row.wrap{flex-wrap:wrap}.row.between{justify-content:space-between;align-items:center}
+.center{text-align:center}
+.togs{display:flex;gap:14px;flex-wrap:wrap}
+.tg{display:flex;gap:6px;align-items:center;font-size:15px}
+.lrow.hl,.bub.hl{border-color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.vocab.mask .vrow b,.vocab.mask .vrow span{visibility:hidden}
+.dlg{display:flex;flex-direction:column;gap:8px}
+.bub{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+.bub.B{background:var(--bg)}
+.bub>div{flex:1;display:flex;flex-direction:column}
+.bub .ff,.vrow .ff{color:var(--mut);font-size:14px}
+.who{width:26px;height:26px;border-radius:50%;background:var(--acc);color:var(--accfg);display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.dpanel{display:flex;flex-direction:column;gap:10px;padding:8px 0 20px}
+.dcard{grid-template-columns:1fr auto}
+.pron{display:block}.pron p{margin:4px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:var(--bg)}
+.chip button{background:none;border:0;padding:8px 12px}
+.chip .slow{border-left:1.5px solid var(--line);padding:8px 10px}
+.set{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.set.row2{flex-direction:row;align-items:center;gap:10px}
+.set select,.set input[type=range]{width:100%;padding:8px;font-size:16px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.set input[type=range]{padding:0}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:20px;padding:6px 12px;border-radius:10px;background:var(--card);border:1.5px solid var(--line)}
+.timer.over{color:var(--badfg);background:var(--bad)}
+.ta{width:100%;padding:12px;font:inherit;font-size:17px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);resize:vertical}
+.okc{color:var(--okfg)}.warn{color:var(--badfg)}
+.text p{margin:0 0 12px;line-height:1.5}
+.qb{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.script{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px}
+.script.hidden{display:none}
+.script p{margin:0 0 8px}
+.resbox{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.fb{display:flex;flex-direction:column;gap:10px;background:var(--card);border:1.5px solid var(--acc);border-radius:14px;padding:12px}
+.fb ul{margin:4px 0 0;padding-left:20px}
+.err .bad{color:var(--badfg);text-decoration:line-through}
+.model{white-space:pre-wrap;background:var(--bg);padding:10px;border-radius:10px}
+.grid{display:flex;flex-direction:column;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2 .btn{padding:14px 8px}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.big2{font-size:21px}
+details{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+details summary{cursor:pointer;font-weight:600}
+.bt{flex:1;font-size:16px}
+.toast{position:fixed;left:12px;right:12px;bottom:14px;z-index:9;background:var(--badfg);color:var(--bad);padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.35;box-shadow:0 4px 18px #0004}
+.trow{display:flex;align-items:center;gap:6px}
+.chip2{background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nextcard{display:flex;flex-direction:column;gap:6px;margin:6px 20px 10px;padding:14px;border-radius:16px;background:var(--card);border:2px solid var(--acc)}
+.mbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:6px}
+.mbar i{display:block;height:100%;background:var(--acc)}
+.mtxt{font-size:12px!important}
+.goal{margin:0 20px 10px;padding:10px 14px;border-radius:14px;background:var(--card);border:1.5px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.goal.done{border-color:var(--acc)}
+.chart{display:flex;align-items:flex-end;gap:8px;height:110px;padding-top:6px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;font-size:12px;color:var(--mut)}
+.chart .col i{display:block;width:100%;max-width:34px;background:var(--acc);border-radius:6px 6px 0 0;min-height:2px}
+.chart .col.off i{background:var(--line)}
+.stat3{display:flex;gap:8px}
+.stat3>div{flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:10px;text-align:center;display:flex;flex-direction:column}
+.stat3 b{font-size:20px}.stat3 span{font-size:12px;color:var(--mut)}
+.hrow{display:flex;align-items:center;gap:8px;font-size:14px}
+.hrow .mbar{flex:1;margin:0}
+
+.big.small{font-size:40px}
+#app>.btn.wide.ghost{background:transparent;color:var(--fg);border:1.5px solid var(--line)}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#2f6f5e"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"></head>
+<body>
+<div id="app"></div>
+<script>
+
+const P=s=>s.trim().split('\n').map(l=>{const [t,f]=l.split('|');return{t:t.trim(),f:f.trim()}});
+
+const COURSES={
+en:{name:'Anglais',lang:'en-US',levels:[[0,'Niveau A1 · Débutant'],[8,'Niveau A1+ · Vie quotidienne'],[16,'Niveau A2 · Élémentaire'],[22,'Niveau B1 · Intermédiaire'],[27,'Niveau B1+ · Vers l\'aisance']],units:[
+{t:'Les bases',n:"« Thank you » : pour le « th », place la langue entre les dents et souffle doucement.",i:P(`
+Hello|Bonjour
+Goodbye|Au revoir
+Please|S'il vous plaît
+Thank you|Merci
+Yes|Oui
+No|Non
+Sorry|Désolé
+Good evening|Bonsoir
+Good night|Bonne nuit
+See you soon|À bientôt`)},
+{t:'Se présenter',n:"« To be » (être) : I am, you are, he/she is, we are, they are. Le pronom est toujours obligatoire en anglais.",i:P(`
+My name is Paul|Je m'appelle Paul
+I am French|Je suis français
+How are you?|Comment allez-vous ?
+I am fine|Je vais bien
+Nice to meet you|Enchanté
+Where are you from?|D'où venez-vous ?
+I live in France|J'habite en France
+I am a teacher|Je suis professeur
+Do you speak English?|Parlez-vous anglais ?
+I do not understand|Je ne comprends pas`)},
+{t:'Les nombres',n:"De 13 à 19, on termine par « -teen » (thirteen, fourteen…). Les dizaines finissent par « -ty » (twenty, thirty…).",i:P(`
+One|Un
+Two|Deux
+Three|Trois
+Four|Quatre
+Five|Cinq
+Ten|Dix
+Twenty|Vingt
+One hundred|Cent
+How much is it?|Combien ça coûte ?
+It is expensive|C'est cher`)},
+{t:'Manger et boire',n:"« I would like… » = « Je voudrais… ». C'est la formule polie au restaurant.",i:P(`
+Water|L'eau
+Bread|Le pain
+Cheese|Le fromage
+Apple|La pomme
+Coffee|Le café
+Milk|Le lait
+Chicken|Le poulet
+I am hungry|J'ai faim
+I would like a coffee|Je voudrais un café
+The bill, please|L'addition, s'il vous plaît`)},
+{t:'La famille',n:"En anglais, les noms n'ont pas de genre : « the » sert pour le masculin, le féminin et le pluriel.",i:P(`
+Mother|La mère
+Father|Le père
+Brother|Le frère
+Sister|La sœur
+Son|Le fils
+Daughter|La fille
+Friend|L'ami
+I have two sisters|J'ai deux sœurs
+My father is tall|Mon père est grand
+She is my wife|C'est ma femme`)},
+{t:'Lieux et directions',n:"« Turn » = tourner, « straight » = tout droit. Les directions utilisent souvent l'impératif : Turn left, Go straight.",i:P(`
+House|La maison
+Street|La rue
+Train station|La gare
+Airport|L'aéroport
+Left|À gauche
+Right|À droite
+Where is the station?|Où est la gare ?
+Turn left|Tournez à gauche
+I am lost|Je suis perdu
+Go straight ahead|Allez tout droit`)},
+{t:'Le temps et les jours',n:"Les jours de la semaine prennent toujours une majuscule en anglais : Monday, Friday…",i:P(`
+Today|Aujourd'hui
+Tomorrow|Demain
+Yesterday|Hier
+Monday|Lundi
+Friday|Vendredi
+Sunday|Dimanche
+What time is it?|Quelle heure est-il ?
+It is nine o'clock|Il est neuf heures
+See you tomorrow|À demain
+I work every day|Je travaille tous les jours`)},
+{t:'Verbes courants',n:"À la 3e personne du singulier, on ajoute -s : I drink, she drinks. Exception : have → has.",i:P(`
+To eat|Manger
+To drink|Boire
+To go|Aller
+To have|Avoir
+To want|Vouloir
+I want to learn English|Je veux apprendre l'anglais
+She drinks water|Elle boit de l'eau
+We are going home|Nous rentrons à la maison
+They have a car|Ils ont une voiture
+I can help you|Je peux vous aider`)},
+{t:'Couleurs et adjectifs',n:"En anglais, l'adjectif est invariable (pas de féminin ni de pluriel) et se place avant le nom : a red car, two red cars.",i:P(`
+Red|Rouge
+Blue|Bleu
+Green|Vert
+Small|Petit
+Hot|Chaud
+Cold|Froid
+The car is red|La voiture est rouge
+The house is big|La maison est grande
+It is very cold today|Il fait très froid aujourd'hui
+I like this blue shirt|J'aime cette chemise bleue`)},
+{t:'Ma journée',n:"Au présent simple, on ajoute -s à la 3e personne : I work → she works. Heures : « at seven ». Moments : « in the morning », « at night ».",i:P(`
+I wake up at seven|Je me réveille à sept heures
+I take a shower|Je prends une douche
+I have breakfast|Je prends le petit-déjeuner
+I go to work by car|Je vais au travail en voiture
+I start work at nine|Je commence le travail à neuf heures
+I have lunch at noon|Je déjeune à midi
+I come home at six|Je rentre à dix-huit heures
+I cook dinner|Je prépare le dîner
+I watch television in the evening|Je regarde la télévision le soir
+I go to bed at eleven|Je me couche à onze heures`)},
+{t:'Poser des questions',n:"Au présent, la question se forme avec do/does + sujet + verbe à l'infinitif : Where do you live? Where does she live? (pas de -s sur le verbe).",i:P(`
+What is your name?|Comment t'appelles-tu ?
+Where do you live?|Où habites-tu ?
+How old are you?|Quel âge as-tu ?
+Who is he?|Qui est-il ?
+Why are you late?|Pourquoi es-tu en retard ?
+When does the train leave?|Quand part le train ?
+Which one do you prefer?|Lequel préfères-tu ?
+Can you repeat that, please?|Peux-tu répéter, s'il te plaît ?
+What does this word mean?|Que signifie ce mot ?
+How do you say this in English?|Comment dit-on ceci en anglais ?`)},
+{t:'Au restaurant',n:"« Could I… ? » et « Could we… ? » sont des formules polies pour demander quelque chose. « I will have… » sert à commander.",i:P(`
+A table for two, please|Une table pour deux, s'il vous plaît
+Could I see the menu?|Puis-je voir la carte ?
+I will have the soup|Je prendrai la soupe
+Is it spicy?|Est-ce épicé ?
+Do you have a vegetarian dish?|Avez-vous un plat végétarien ?
+Could we have some more water?|Pourrions-nous avoir un peu plus d'eau ?
+The food is delicious|La nourriture est délicieuse
+Can I pay by card?|Puis-je payer par carte ?
+Keep the change|Gardez la monnaie
+Enjoy your meal|Bon appétit`)},
+{t:'Faire les courses',n:"« How much is / does… cost? » demande un prix. Pour parler de taille : size ; pour les chaussures et vêtements : « Can I try it on? ».",i:P(`
+I am just looking|Je regarde seulement
+How much does this cost?|Combien coûte ceci ?
+Do you have this in a larger size?|L'avez-vous en plus grand ?
+Can I try it on?|Puis-je l'essayer ?
+Where is the fitting room?|Où est la cabine d'essayage ?
+It is too expensive|C'est trop cher
+Is there a discount?|Y a-t-il une réduction ?
+Do you accept credit cards?|Acceptez-vous les cartes bancaires ?
+I will take it|Je le prends
+Can I have a receipt?|Puis-je avoir un reçu ?`)},
+{t:'Voyager',n:"Attention : « a ticket to London » (un billet pour Londres). « Check-in » et « check-out » désignent l'arrivée et le départ de l'hôtel.",i:P(`
+I have a reservation|J'ai une réservation
+A single room, please|Une chambre simple, s'il vous plaît
+What time is check-out?|À quelle heure faut-il libérer la chambre ?
+Is breakfast included?|Le petit-déjeuner est-il inclus ?
+What is the Wi-Fi password?|Quel est le mot de passe du Wi-Fi ?
+Where is the bus stop?|Où est l'arrêt de bus ?
+One ticket to London, please|Un billet pour Londres, s'il vous plaît
+Where can I buy a ticket?|Où puis-je acheter un billet ?
+My flight is delayed|Mon vol est retardé
+Can you call a taxi for me?|Pouvez-vous m'appeler un taxi ?`)},
+{t:'La santé',n:"En anglais, on dit « I have a headache » (j'ai un mal de tête) et non « I have pain ». Pour la douleur : « It hurts ».",i:P(`
+I have a headache|J'ai mal à la tête
+I feel sick|Je me sens malade
+I have a fever|J'ai de la fièvre
+I need a doctor|J'ai besoin d'un médecin
+Where does it hurt?|Où avez-vous mal ?
+Take this medicine twice a day|Prenez ce médicament deux fois par jour
+Do you have something for a cold?|Avez-vous quelque chose contre le rhume ?
+I need to rest|J'ai besoin de me reposer
+I feel better today|Je me sens mieux aujourd'hui
+Call an ambulance|Appelez une ambulance`)},
+{t:'La météo',n:"« It » est le sujet impersonnel pour la météo : It is raining, It is sunny. En anglais britannique : favourite, en américain : favorite.",i:P(`
+It is sunny|Il y a du soleil
+It is raining|Il pleut
+It is windy today|Il y a du vent aujourd'hui
+The sky is cloudy|Le ciel est nuageux
+It is freezing outside|Il gèle dehors
+What is the weather like?|Quel temps fait-il ?
+The weather is nice|Il fait beau
+It will snow tomorrow|Il neigera demain
+I need an umbrella|J'ai besoin d'un parapluie
+Summer is my favourite season|L'été est ma saison préférée`)},
+{t:'Le passé (prétérit)',n:"Verbes réguliers : + -ed (watch → watched). Irréguliers à connaître : go → went, eat → ate, buy → bought, see → saw. Négation et question : did + verbe à l'infinitif.",i:P(`
+I went to Paris last year|Je suis allé à Paris l'année dernière
+She watched a film yesterday|Elle a regardé un film hier
+We ate pizza last night|Nous avons mangé une pizza hier soir
+He did not come to work|Il n'est pas venu travailler
+Did you see him?|L'as-tu vu ?
+They bought a new house|Ils ont acheté une nouvelle maison
+I was tired|J'étais fatigué
+We were at home|Nous étions à la maison
+I met her two days ago|Je l'ai rencontrée il y a deux jours
+What did you do on Sunday?|Qu'as-tu fait dimanche ?`)},
+{t:'Le futur',n:"« Will » : décision sur le moment, prédiction. « Be going to » : intention ou événement déjà prévu / qui se prépare. Le présent continu s'emploie aussi pour un rendez-vous fixé.",i:P(`
+I will call you tomorrow|Je t'appellerai demain
+She is going to travel next week|Elle va voyager la semaine prochaine
+We will not be late|Nous ne serons pas en retard
+It is going to rain|Il va pleuvoir
+Will you help me?|M'aideras-tu ?
+They will arrive at noon|Ils arriveront à midi
+Next year I will move|L'année prochaine je déménagerai
+I am meeting him on Friday|Je le rencontre vendredi
+What are you going to do?|Qu'est-ce que tu vas faire ?
+Maybe we will go to the beach|Peut-être irons-nous à la plage`)},
+{t:'Au travail',n:"« I will get back to you » = je reviens vers vous. « Could you… ? » est plus poli que « Can you… ? » dans un contexte professionnel.",i:P(`
+I work in a hospital|Je travaille dans un hôpital
+My boss is very kind|Mon patron est très gentil
+I have a meeting at ten|J'ai une réunion à dix heures
+Can you send me the file?|Peux-tu m'envoyer le fichier ?
+I am busy right now|Je suis occupé en ce moment
+The deadline is on Friday|La date limite est vendredi
+Let me check my schedule|Laissez-moi vérifier mon planning
+I will get back to you|Je reviens vers vous
+Could you help me with this?|Pourriez-vous m'aider avec ceci ?
+I am on holiday next week|Je suis en congé la semaine prochaine`)},
+{t:'Informatique',n:"« Log in / log out » = se connecter / se déconnecter. « Down » = en panne, « up » = en service. « Ticket » est utilisé tel quel dans le support.",i:P(`
+Computer|L'ordinateur
+Password|Le mot de passe
+The network is down|Le réseau est en panne
+Restart your computer|Redémarrez votre ordinateur
+I cannot log in|Je ne peux pas me connecter
+The printer is not working|L'imprimante ne fonctionne pas
+Please update the software|Veuillez mettre à jour le logiciel
+Can you share your screen?|Pouvez-vous partager votre écran ?
+I will open a ticket|J'ouvrirai un ticket
+The server is running slowly|Le serveur est lent`)},
+{t:'Comparer',n:"Adjectif court : + -er / the -est (tall → taller → the tallest). Adjectif long : more / the most (interesting). Irréguliers : good → better → the best.",i:P(`
+She is taller than me|Elle est plus grande que moi
+Today is colder than yesterday|Aujourd'hui est plus froid qu'hier
+This book is more interesting|Ce livre est plus intéressant
+My car is as fast as yours|Ma voiture est aussi rapide que la tienne
+It is the best restaurant in town|C'est le meilleur restaurant de la ville
+He is the tallest in the class|Il est le plus grand de la classe
+This one is cheaper|Celui-ci est moins cher
+She speaks better than me|Elle parle mieux que moi
+I am much happier now|Je suis beaucoup plus heureux maintenant
+The more, the better|Plus il y en a, mieux c'est`)},
+{t:'Prépositions',n:"Trois prépositions clés : AT (heure, point précis : at six, at the station), ON (jours, surface : on Monday, on the table), IN (mois, lieu fermé : in May, in the kitchen).",i:P(`
+The book is on the table|Le livre est sur la table
+The cat is under the chair|Le chat est sous la chaise
+I am in the kitchen|Je suis dans la cuisine
+She is next to me|Elle est à côté de moi
+The keys are behind the door|Les clés sont derrière la porte
+I live near the park|J'habite près du parc
+We meet at the station|Nous nous retrouvons à la gare
+I arrive on Monday at noon|J'arrive lundi à midi
+He is waiting in front of the cinema|Il attend devant le cinéma
+The bank is between the shop and the school|La banque est entre le magasin et l'école`)},
+{t:'Faux amis',n:"Pièges classiques pour un francophone : actually = en fait (≠ actuellement), library = bibliothèque (≠ librairie), sensible = raisonnable (≠ sensible).",i:P(`
+Actually|En fait
+Currently|Actuellement
+Library|La bibliothèque
+Bookshop|La librairie
+To attend|Assister à
+Eventually|Finalement
+I am currently in London|Je suis actuellement à Londres
+He is very sensible|Il est très raisonnable
+She is sympathetic|Elle est compatissante
+I will ask for the bill|Je demanderai l'addition`)},
+{t:'Le present perfect',n:"have / has + participe passé. On l'emploie pour une expérience (ever, never), un résultat présent (just, already) ou une durée jusqu'à maintenant (for, since). Pas de date précise avec lui.",i:P(`
+I have seen this film|J'ai vu ce film
+She has gone home|Elle est rentrée chez elle
+We have never been to Spain|Nous ne sommes jamais allés en Espagne
+Have you ever eaten sushi?|As-tu déjà mangé des sushis ?
+I have lived here for five years|J'habite ici depuis cinq ans
+He has just left|Il vient de partir
+They have already finished|Ils ont déjà fini
+I have not done my homework|Je n'ai pas fait mes devoirs
+How long have you worked here?|Depuis combien de temps travaillez-vous ici ?
+This is the best film I have ever seen|C'est le meilleur film que j'aie jamais vu`)},
+{t:'Donner son avis',n:"« I think » + proposition (sans « que »). « Agree » n'a pas de verbe être : I agree (et non « I am agree »).",i:P(`
+I think that it is a good idea|Je pense que c'est une bonne idée
+In my opinion, it is too late|À mon avis, il est trop tard
+I agree with you|Je suis d'accord avec vous
+I do not agree|Je ne suis pas d'accord
+That is a good point|C'est un bon argument
+On the other hand|D'un autre côté
+It depends on the situation|Cela dépend de la situation
+I would rather stay at home|Je préférerais rester à la maison
+What do you think about it?|Qu'en pensez-vous ?
+I am not sure|Je ne suis pas sûr`)},
+{t:'Conditionnel et obligation',n:"If + présent → will (réel). If + prétérit → would (hypothèse). « Must not » = interdiction ; « do not have to » = pas obligé. « Should » = conseil.",i:P(`
+If it rains, we will stay home|S'il pleut, nous resterons à la maison
+If I had more time, I would travel|Si j'avais plus de temps, je voyagerais
+Could you open the window?|Pourriez-vous ouvrir la fenêtre ?
+Would you like some tea?|Voudriez-vous du thé ?
+I would be happy to help|Je serais ravi d'aider
+You should see a doctor|Tu devrais voir un médecin
+You must not park here|Vous ne devez pas vous garer ici
+You do not have to come|Tu n'es pas obligé de venir
+Do you mind if I sit here?|Cela vous dérange-t-il si je m'assois ici ?
+I wish I could speak English fluently|J'aimerais pouvoir parler anglais couramment`)},
+{t:'Verbes à particule',n:"Un verbe + une particule (up, off, on, out…) forme un nouveau sens : look = regarder, look for = chercher, look after = s'occuper de. Il faut les apprendre en bloc.",i:P(`
+To wake up|Se réveiller
+To give up|Abandonner
+To look for|Chercher
+To turn off|Éteindre
+To turn on|Allumer
+To pick up|Ramasser
+To find out|Découvrir
+To carry on|Continuer
+To set up|Installer
+To get along with|S'entendre avec`)}
+,
+{t:"Au bureau et par e-mail",n:"Formules polies : « Could you… ? », « I'll get back to you », « Please find attached ».",i:P(`
+Could you send me the report?|Pourriez-vous m'envoyer le rapport ?
+Let's schedule a meeting|Planifions une réunion
+I'm in charge of the network|Je suis responsable du réseau
+The deadline is next Friday|La date limite est vendredi prochain
+We need to fix this issue|Nous devons régler ce problème
+Could you reset my password?|Pourriez-vous réinitialiser mon mot de passe ?
+I'll get back to you|Je reviens vers vous
+Please find the attachment|Veuillez trouver la pièce jointe
+Thanks for your quick reply|Merci pour votre réponse rapide
+Best regards|Cordialement`)},
+{t:"Connecteurs pour argumenter",n:"Pour structurer une idée : however, although, therefore, in addition.",i:P(`
+However|Cependant
+Although|Bien que
+Therefore|Donc, par conséquent
+In addition|De plus
+Nevertheless|Néanmoins
+As a result|Par conséquent
+In my opinion|À mon avis
+For instance|Par exemple
+Despite the fact that|Malgré le fait que
+To sum up|Pour résumer`)},
+{t:"Expressions idiomatiques",n:"Les expressions imagées ne se traduisent pas mot à mot : il faut les apprendre en bloc.",i:P(`
+It's a piece of cake|C'est facile comme bonjour
+Break a leg|Bonne chance
+It's raining cats and dogs|Il pleut des cordes
+Once in a blue moon|Très rarement
+Under the weather|Pas dans son assiette
+Hit the road|Se mettre en route
+Spill the beans|Vendre la mèche
+Call it a day|Arrêter pour aujourd'hui
+Better late than never|Mieux vaut tard que jamais
+The ball is in your court|C'est à vous de jouer`)},
+{t:"Conditionnel et hypothèses",n:"Type 1 : if + présent, will. Type 2 : if + prétérit, would. Type 3 : if + past perfect, would have.",i:P(`
+If I had more time, I would learn Italian|Si j'avais plus de temps, j'apprendrais l'italien
+If I were you, I would call him|Si j'étais toi, je l'appellerais
+If you study, you will succeed|Si tu étudies, tu réussiras
+I wish I could speak better|J'aimerais pouvoir mieux parler
+If I had known, I would have come|Si j'avais su, je serais venu
+She would travel if she had money|Elle voyagerait si elle avait de l'argent
+Unless you hurry, you will be late|À moins de te dépêcher, tu seras en retard
+What would you do in my place?|Que ferais-tu à ma place ?
+I should have called you|J'aurais dû t'appeler
+It might rain tomorrow|Il pourrait pleuvoir demain`)},
+{t:"Passif et discours rapporté",n:"Passif : be + participe passé. Discours rapporté : le verbe recule d'un temps (is → was).",i:P(`
+The email was sent yesterday|Le mail a été envoyé hier
+The server is being repaired|Le serveur est en cours de réparation
+English is spoken worldwide|L'anglais est parlé dans le monde entier
+He said that he was tired|Il a dit qu'il était fatigué
+She asked me where I lived|Elle m'a demandé où j'habitais
+They told me to wait|Ils m'ont dit d'attendre
+The problem has been solved|Le problème a été résolu
+I was told the truth|On m'a dit la vérité
+The window was broken by a ball|La fenêtre a été cassée par un ballon
+He wondered if it was true|Il se demandait si c'était vrai`)},
+{t:"Émotions et caractère",n:"Pour parler de ses sentiments : « I feel… », « It makes me… », « I can't stand… ».",i:P(`
+I'm really excited|Je suis vraiment enthousiaste
+I feel overwhelmed|Je me sens débordé
+She is quite shy|Elle est plutôt timide
+He's very reliable|Il est très fiable
+I'm looking forward to it|J'ai hâte d'y être
+It makes me nervous|Ça me rend nerveux
+I can't stand waiting|Je ne supporte pas d'attendre
+I'm fed up with this|J'en ai assez de ça
+Don't worry about it|Ne t'en fais pas
+That's a relief|Quel soulagement`)}
+]},
+es:{name:'Espagnol',lang:'es-ES',levels:[[0,'Niveau A1 · Débutant']],units:[
+{t:'Les bases',n:"Le « h » est muet (hola se prononce « ola »). Les questions et exclamations commencent par ¿ et ¡.",i:P(`
+Hola|Salut
+Buenos días|Bonjour
+Buenas tardes|Bon après-midi
+Buenas noches|Bonne nuit
+Adiós|Au revoir
+Por favor|S'il vous plaît
+Gracias|Merci
+Sí|Oui
+Lo siento|Désolé
+Hasta pronto|À bientôt`)},
+{t:'Se présenter',n:"Deux verbes « être » : ser (identité, profession : soy) et estar (état, lieu : estoy). Le pronom sujet est souvent omis.",i:P(`
+Me llamo Paul|Je m'appelle Paul
+Soy francés|Je suis français
+¿Cómo estás?|Comment vas-tu ?
+Estoy bien|Je vais bien
+Mucho gusto|Enchanté
+¿De dónde eres?|D'où viens-tu ?
+Vivo en Francia|J'habite en France
+Soy profesor|Je suis professeur
+¿Hablas inglés?|Parles-tu anglais ?
+No entiendo|Je ne comprends pas`)},
+{t:'Les nombres',n:"« Cien » = 100 seul ; à partir de 101, on dit « ciento » (ciento uno).",i:P(`
+Uno|Un
+Dos|Deux
+Tres|Trois
+Cuatro|Quatre
+Cinco|Cinq
+Diez|Dix
+Veinte|Vingt
+Cien|Cent
+¿Cuánto cuesta?|Combien ça coûte ?
+Es caro|C'est cher`)},
+{t:'Manger et boire',n:"Les noms ont un genre : el (masculin), la (féminin). « El agua » est féminin malgré le « el ».",i:P(`
+El agua|L'eau
+El pan|Le pain
+El queso|Le fromage
+La manzana|La pomme
+El café|Le café
+La leche|Le lait
+El pollo|Le poulet
+Tengo hambre|J'ai faim
+Quisiera un café|Je voudrais un café
+La cuenta, por favor|L'addition, s'il vous plaît`)},
+{t:'La famille',n:"Au pluriel, on ajoute -s : hermano → hermanos (frères), mais aussi « frères et sœurs ».",i:P(`
+La madre|La mère
+El padre|Le père
+El hermano|Le frère
+La hermana|La sœur
+El hijo|Le fils
+La hija|La fille
+El amigo|L'ami
+Tengo dos hermanas|J'ai deux sœurs
+Mi padre es alto|Mon père est grand
+Ella es mi esposa|Elle est ma femme`)},
+{t:'Lieux et directions',n:"Pour dire où se trouve quelque chose, on utilise « estar » : ¿Dónde está…?",i:P(`
+La casa|La maison
+La calle|La rue
+La estación|La gare
+El aeropuerto|L'aéroport
+A la izquierda|À gauche
+A la derecha|À droite
+¿Dónde está la estación?|Où est la gare ?
+Gira a la izquierda|Tourne à gauche
+Estoy perdido|Je suis perdu
+Sigue recto|Continue tout droit`)},
+{t:'Le temps et les jours',n:"Les jours de la semaine s'écrivent sans majuscule. « Mañana » veut dire à la fois « demain » et « matin ».",i:P(`
+Hoy|Aujourd'hui
+Mañana|Demain
+Ayer|Hier
+Lunes|Lundi
+Viernes|Vendredi
+Domingo|Dimanche
+¿Qué hora es?|Quelle heure est-il ?
+Son las nueve|Il est neuf heures
+Hasta mañana|À demain
+Trabajo todos los días|Je travaille tous les jours`)},
+{t:'Verbes courants',n:"Les verbes se terminent en -ar, -er ou -ir à l'infinitif. Querer et tener changent leur voyelle : quiero, tengo.",i:P(`
+Comer|Manger
+Beber|Boire
+Ir|Aller
+Tener|Avoir
+Querer|Vouloir
+Quiero aprender español|Je veux apprendre l'espagnol
+Ella bebe agua|Elle boit de l'eau
+Vamos a casa|Nous allons à la maison
+Ellos tienen un coche|Ils ont une voiture
+Puedo ayudarte|Je peux t'aider`)}
+]},
+it:{name:'Italien',lang:'it-IT',levels:[[0,'Niveau A1 · Débutant'],[8,'Niveau A2 · Vie quotidienne'],[14,'Niveau B1 · Préparation au bac']],units:[
+{t:'Les bases',n:"L'italien se prononce comme il s'écrit. Les consonnes doubles (pala / palla) sont tenues plus longtemps. « ci » et « ce » = tchi / tché ; « chi » et « che » = ki / ké.",i:P(`
+Ciao|Salut
+Buongiorno|Bonjour
+Buonasera|Bonsoir
+Buonanotte|Bonne nuit
+Arrivederci|Au revoir
+Per favore|S'il vous plaît
+Grazie|Merci
+Sì|Oui
+Mi dispiace|Désolé
+A presto|À bientôt`)},
+{t:'Se présenter',n:"Le pronom sujet est souvent omis : (io) sono francese. « Sono » = je suis, « sei » = tu es, « è » = il/elle est. On vouvoie avec « Lei ».",i:P(`
+Mi chiamo Marco|Je m'appelle Marco
+Sono francese|Je suis français
+Come stai?|Comment vas-tu ?
+Sto bene|Je vais bien
+Piacere|Enchanté
+Di dove sei?|D'où viens-tu ?
+Abito in Francia|J'habite en France
+Sono insegnante|Je suis enseignant
+Parli inglese?|Parles-tu anglais ?
+Non capisco|Je ne comprends pas`)},
+{t:'Les nombres',n:"De 11 à 16 : undici, dodici, tredici… Les dizaines : venti, trenta, quaranta. Le « c » de « cento » se prononce « tch ».",i:P(`
+Uno|Un
+Due|Deux
+Tre|Trois
+Quattro|Quatre
+Cinque|Cinq
+Dieci|Dix
+Venti|Vingt
+Cento|Cent
+Quanto costa?|Combien ça coûte ?
+È caro|C'est cher`)},
+{t:'Manger et boire',n:"Les noms ont un genre : il / la (l' devant une voyelle) ; au pluriel i / le. « Vorrei » = je voudrais, formule polie au restaurant.",i:P(`
+L'acqua|L'eau
+Il pane|Le pain
+Il formaggio|Le fromage
+La mela|La pomme
+Il caffè|Le café
+Il latte|Le lait
+Il pollo|Le poulet
+Ho fame|J'ai faim
+Vorrei un caffè|Je voudrais un café
+Il conto, per favore|L'addition, s'il vous plaît`)},
+{t:'La famille',n:"Les possessifs prennent l'article (il mio libro), sauf devant un nom de famille au singulier : mio padre, mia madre.",i:P(`
+La madre|La mère
+Il padre|Le père
+Il fratello|Le frère
+La sorella|La sœur
+Il figlio|Le fils
+La figlia|La fille
+L'amico|L'ami
+Ho due sorelle|J'ai deux sœurs
+Mio padre è alto|Mon père est grand
+Lei è mia moglie|Elle est ma femme`)},
+{t:'Lieux et directions',n:"« Dov'è… ? » = Où est… ? Pour les directions, on utilise l'impératif : gira, vai (tu) ; giri, vada (vous).",i:P(`
+La casa|La maison
+La strada|La rue
+La stazione|La gare
+L'aeroporto|L'aéroport
+A sinistra|À gauche
+A destra|À droite
+Dov'è la stazione?|Où est la gare ?
+Gira a sinistra|Tourne à gauche
+Mi sono perso|Je suis perdu
+Vai dritto|Va tout droit`)},
+{t:'Le temps et les jours',n:"Les jours s'écrivent sans majuscule : lunedì, venerdì. Pour l'heure : « Sono le nove » (il est neuf heures), mais « È l'una » (il est une heure).",i:P(`
+Oggi|Aujourd'hui
+Domani|Demain
+Ieri|Hier
+Lunedì|Lundi
+Venerdì|Vendredi
+Domenica|Dimanche
+Che ore sono?|Quelle heure est-il ?
+Sono le nove|Il est neuf heures
+A domani|À demain
+Lavoro tutti i giorni|Je travaille tous les jours`)},
+{t:'Verbes courants',n:"Infinitifs en -are, -ere, -ire. « Volere » (vouloir) et « potere » (pouvoir) sont suivis d'un infinitif : voglio imparare, posso aiutarti.",i:P(`
+Mangiare|Manger
+Bere|Boire
+Andare|Aller
+Avere|Avoir
+Volere|Vouloir
+Voglio imparare l'italiano|Je veux apprendre l'italien
+Lei beve acqua|Elle boit de l'eau
+Andiamo a casa|Nous rentrons à la maison
+Hanno una macchina|Ils ont une voiture
+Posso aiutarti|Je peux t'aider`)},
+{t:"Passé composé (passato prossimo)",n:"Avec « avere » ou « essere » + participe passé. Avec « essere », le participe s'accorde : sono andato / sono andata, siamo partiti.",i:P(`
+Ho mangiato|J'ai mangé
+Sono andato a Roma|Je suis allé à Rome
+Ieri abbiamo visitato il museo|Hier nous avons visité le musée
+Hai già finito?|As-tu déjà fini ?
+Non ho capito|Je n'ai pas compris
+Lei è arrivata tardi|Elle est arrivée en retard
+Siamo partiti presto|Nous sommes partis tôt
+Cosa hai fatto ieri sera?|Qu'as-tu fait hier soir ?
+Ho visto un bel film|J'ai vu un beau film
+Sono stato molto contento|J'ai été très content`)},
+{t:"Passé : l'imparfait (imperfetto)",n:"L'imparfait décrit le décor, les habitudes et ce qui durait : faceva freddo, c'era molta gente, andavo spesso al mare. Il alterne avec le passato prossimo pour les événements.",i:P(`
+Quando ero piccolo giocavo sempre|Quand j'étais petit, je jouais toujours
+Faceva freddo|Il faisait froid
+C'era molta gente|Il y avait beaucoup de monde
+Abitavamo in campagna|Nous habitions à la campagne
+Di solito mi alzavo presto|D'habitude je me levais tôt
+Mentre studiavo, ascoltavo musica|Pendant que j'étudiais, j'écoutais de la musique
+Era una bella giornata|C'était une belle journée
+Avevo quindici anni|J'avais quinze ans
+Eravamo molto felici|Nous étions très heureux
+Andavo spesso al mare|J'allais souvent à la mer`)},
+{t:"École et études",n:"« Il liceo » = le lycée. L'examen final s'appelle « l'esame di maturità » (ou « la maturità »).",i:P(`
+La scuola|L'école
+Il liceo|Le lycée
+L'esame di maturità|Le baccalauréat
+Il professore|Le professeur
+Lo studente|L'élève, l'étudiant
+Il voto|La note
+I compiti|Les devoirs
+Studio per l'esame|J'étudie pour l'examen
+Ho preso un bel voto|J'ai eu une bonne note
+Sono stufo di studiare|J'en ai marre d'étudier`)},
+{t:"Voyages et vacances",n:"« Vorrei… » (je voudrais) est la formule polie pour demander quelque chose.",i:P(`
+L'albergo|L'hôtel
+La prenotazione|La réservation
+Il biglietto|Le billet
+Il treno|Le train
+La valigia|La valise
+Il passaporto|Le passeport
+Vorrei prenotare una camera doppia|Je voudrais réserver une chambre double
+A che ora parte il treno?|À quelle heure part le train ?
+Ho perso il bagaglio|J'ai perdu mes bagages
+Le vacanze al mare|Les vacances à la mer`)},
+{t:"Santé et sport",n:"« Mi fa male… » = j'ai mal à… ; « Ho mal di testa / di gola » = j'ai mal à la tête / à la gorge.",i:P(`
+Lo sport|Le sport
+Faccio sport due volte a settimana|Je fais du sport deux fois par semaine
+Mi fa male la testa|J'ai mal à la tête
+Ho la febbre|J'ai de la fièvre
+Devo andare dal medico|Je dois aller chez le médecin
+La squadra|L'équipe
+Giocare a calcio|Jouer au football
+Una vita sana|Une vie saine
+Mangiare in modo equilibrato|Manger de manière équilibrée
+Dormire bene è fondamentale|Bien dormir est fondamental`)},
+{t:"Travail et professions",n:"« Lavorare » = travailler ; « il lavoro » = le travail. Les professions ont souvent un féminin en -essa ou -a : il dottore / la dottoressa.",i:P(`
+Il lavoro|Le travail
+L'ingegnere|L'ingénieur
+Il medico|Le médecin
+L'infermiera|L'infirmière
+Lavoro in un ospedale|Je travaille dans un hôpital
+Cerco un lavoro part-time|Je cherche un travail à temps partiel
+Il colloquio di lavoro|L'entretien d'embauche
+Lo stipendio|Le salaire
+Il curriculum|Le CV
+La professione che preferisco|Le métier que je préfère`)},
+{t:"Donner son avis et argumenter",n:"Ces connecteurs sont indispensables à l'écrit et à l'oral du bac. Après « penso che », « credo che », on emploie le subjonctif : penso che sia importante.",i:P(`
+Secondo me|À mon avis
+Penso che sia importante|Je pense que c'est important
+Sono d'accordo|Je suis d'accord
+Non sono d'accordo|Je ne suis pas d'accord
+Da una parte… dall'altra|D'une part… d'autre part
+Inoltre|De plus
+Tuttavia|Cependant
+Per esempio|Par exemple
+Infatti|En effet
+In conclusione|En conclusion`)},
+{t:"Sentiments et émotions",n:"« Mi sento… » + adjectif = je me sens… ; « Non vedo l'ora di… » = j'ai hâte de…",i:P(`
+Sono contento|Je suis content
+Sono preoccupato|Je suis inquiet
+Mi sento stanco|Je me sens fatigué
+Ho paura|J'ai peur
+Sono arrabbiato|Je suis en colère
+Che sorpresa!|Quelle surprise !
+Mi manchi|Tu me manques
+Sono emozionato|Je suis ému
+Mi annoio|Je m'ennuie
+Non vedo l'ora di partire|J'ai hâte de partir`)},
+{t:"Futur et projets",n:"Futur simple : andrò, farò, sarò. Le conditionnel (« mi piacerebbe », « vorrei ») exprime un souhait.",i:P(`
+Domani andrò al mare|Demain j'irai à la mer
+Dopo il liceo mi iscriverò all'università|Après le lycée, je m'inscrirai à l'université
+Faremo un viaggio in Italia|Nous ferons un voyage en Italie
+Che cosa farai da grande?|Que feras-tu plus tard ?
+Vorrei diventare ingegnere|Je voudrais devenir ingénieur
+Se avrò tempo, verrò|Si j'ai le temps, je viendrai
+Sarà una bella esperienza|Ce sera une belle expérience
+Mi piacerebbe vivere all'estero|J'aimerais vivre à l'étranger
+Cercherò un lavoro|Je chercherai un travail
+Il futuro mi preoccupa un po'|L'avenir m'inquiète un peu`)},
+{t:"Technologie et réseaux sociaux",n:"Thème très fréquent au bac. Préparez toujours un avantage, un danger et un exemple personnel.",i:P(`
+Il telefono cellulare|Le téléphone portable
+I social network|Les réseaux sociaux
+Il computer|L'ordinateur
+Il messaggio|Le message
+Scaricare|Télécharger
+Passo troppo tempo online|Je passe trop de temps en ligne
+La tecnologia ci aiuta, ma crea dipendenza|La technologie nous aide, mais elle crée une dépendance
+Condividere una foto|Partager une photo
+La connessione è lenta|La connexion est lente
+Mi fido poco di internet|Je fais peu confiance à internet`)},
+{t:"Environnement et société",n:"Autre thème classique du bac. « Bisogna + infinitif » = il faut… ; « dobbiamo » = nous devons.",i:P(`
+L'ambiente|L'environnement
+L'inquinamento|La pollution
+La raccolta differenziata|Le tri sélectif
+Il riscaldamento globale|Le réchauffement climatique
+Riciclare|Recycler
+I mezzi pubblici|Les transports en commun
+Bisogna ridurre la plastica|Il faut réduire le plastique
+Dobbiamo proteggere il pianeta|Nous devons protéger la planète
+Le energie rinnovabili|Les énergies renouvelables
+Ognuno può fare la sua parte|Chacun peut faire sa part`)},
+{t:"Culture et traditions italiennes",n:"Utile pour illustrer ses arguments avec des exemples concrets pendant l'oral.",i:P(`
+La cucina italiana|La cuisine italienne
+Il Rinascimento|La Renaissance
+Il patrimonio artistico|Le patrimoine artistique
+Le feste tradizionali|Les fêtes traditionnelles
+Il Carnevale di Venezia|Le carnaval de Venise
+Mangiamo la pasta a pranzo|Nous mangeons des pâtes au déjeuner
+La famiglia è molto importante|La famille est très importante
+Il calcio è una passione nazionale|Le football est une passion nationale
+Il dialetto|Le dialecte
+Un paese ricco di storia|Un pays riche d'histoire`)}
+]}
+};
+for(const ci in COURSES)COURSES[ci].units.forEach(u=>u.i.forEach(x=>x.id=ci+'|'+x.t));
+
+/* ---------- dialogues ---------- */
+const DL=(t,sc,txt)=>({t,sc,l:txt.trim().split('\n').map(x=>{const [s,tt,f]=x.split('|');return{s,t:tt,f}})});
+const DIALOGS={
+en:[
+DL('Se présenter','Première rencontre',`
+A|Hello! My name is Anna. What is your name?|Bonjour ! Je m'appelle Anna. Comment t'appelles-tu ?
+B|Hi Anna! I am Paul. Nice to meet you.|Salut Anna ! Je suis Paul. Enchanté.
+A|Nice to meet you too. Where are you from?|Enchantée aussi. D'où viens-tu ?
+B|I am from France. I live in Nantes.|Je viens de France. J'habite à Nantes.
+A|Do you speak English?|Parles-tu anglais ?
+B|A little, but I am learning every day.|Un peu, mais j'apprends tous les jours.`),
+DL('Au café','Commander une boisson',`
+A|Good morning! What can I get you?|Bonjour ! Que puis-je vous servir ?
+B|A coffee and a croissant, please.|Un café et un croissant, s'il vous plaît.
+A|Would you like milk with your coffee?|Voulez-vous du lait avec votre café ?
+B|Yes, please. How much is it?|Oui, s'il vous plaît. Combien ça coûte ?
+A|That is five euros fifty.|Ça fait cinq euros cinquante.
+B|Here you are. Thank you very much!|Voilà. Merci beaucoup !`),
+DL('Demander son chemin','Dans la rue',`
+A|Excuse me, where is the train station?|Excusez-moi, où est la gare ?
+B|Go straight ahead and turn left at the bank.|Allez tout droit et tournez à gauche à la banque.
+A|Is it far from here?|Est-ce loin d'ici ?
+B|No, it is about five minutes on foot.|Non, c'est à environ cinq minutes à pied.
+A|Thank you so much for your help.|Merci beaucoup pour votre aide.
+B|You are welcome. Have a nice day!|De rien. Bonne journée !`),
+DL('À l\'hôtel','Arrivée à la réception',`
+A|Good evening. I have a reservation under Martin.|Bonsoir. J'ai une réservation au nom de Martin.
+B|Yes, a single room for two nights. Is that correct?|Oui, une chambre simple pour deux nuits. C'est exact ?
+A|That is right. Is breakfast included?|C'est exact. Le petit-déjeuner est-il inclus ?
+B|Yes, it is served from seven to ten.|Oui, il est servi de sept heures à dix heures.
+A|Perfect. What is the Wi-Fi password?|Parfait. Quel est le mot de passe du Wi-Fi ?
+B|It is on the card in your room. Enjoy your stay!|Il est sur la carte dans votre chambre. Bon séjour !`),
+DL('Support informatique','Au téléphone',`
+A|IT support, how can I help you?|Support informatique, comment puis-je vous aider ?
+B|Hello, I cannot log in to my computer.|Bonjour, je ne peux pas me connecter à mon ordinateur.
+A|Have you tried to restart it?|Avez-vous essayé de le redémarrer ?
+B|Yes, but the problem is still there.|Oui, mais le problème persiste.
+A|Let me open a ticket and reset your password.|Je vais ouvrir un ticket et réinitialiser votre mot de passe.
+B|Great, thank you for your help.|Super, merci pour votre aide.`),
+DL('Dans un magasin','Essayer un vêtement',`
+A|Hello, can I help you?|Bonjour, puis-je vous aider ?
+B|Yes, I am looking for a blue jacket.|Oui, je cherche une veste bleue.
+A|What size are you?|Quelle taille faites-vous ?
+B|I am a medium. Can I try it on?|Je fais du M. Puis-je l'essayer ?
+A|Of course. The fitting rooms are over there.|Bien sûr. Les cabines d'essayage sont là-bas.
+B|It fits well. I will take it.|Elle me va bien. Je la prends.`),
+DL("Au bureau","Problème informatique",`
+A|Hi, my computer won't start. Can you help me?|Bonjour, mon ordinateur ne démarre pas. Pouvez-vous m'aider ?
+B|Sure. Have you tried restarting it?|Bien sûr. Avez-vous essayé de le redémarrer ?
+A|Yes, twice, but the screen stays black.|Oui, deux fois, mais l'écran reste noir.
+B|Let me check the cable. It looks loose.|Je vais vérifier le câble. Il a l'air mal branché.
+A|Oh, that was it! Thank you so much.|Ah, c'était ça ! Merci beaucoup.
+B|No problem. Call me if it happens again.|Pas de problème. Appelez-moi si ça se reproduit.`),
+DL("Entretien d'embauche","Un entretien",`
+A|Tell me about yourself.|Parlez-moi de vous.
+B|I work in IT support and I love solving problems.|Je travaille dans le support informatique et j'adore résoudre des problèmes.
+A|What is your greatest strength?|Quelle est votre plus grande qualité ?
+B|I stay calm under pressure and I learn quickly.|Je reste calme sous la pression et j'apprends vite.
+A|Why do you want this job?|Pourquoi voulez-vous ce poste ?
+B|I would like to take on more responsibility.|Je voudrais assumer plus de responsabilités.
+A|When could you start?|Quand pourriez-vous commencer ?
+B|I could start next month.|Je pourrais commencer le mois prochain.`)
+],
+es:[
+DL('Se présenter','Première rencontre',`
+A|¡Hola! Me llamo Ana. ¿Cómo te llamas?|Salut ! Je m'appelle Ana. Comment t'appelles-tu ?
+B|Hola, Ana. Me llamo Pablo. Mucho gusto.|Salut Ana. Je m'appelle Pablo. Enchanté.
+A|Mucho gusto. ¿De dónde eres?|Enchantée. D'où viens-tu ?
+B|Soy de Francia. Vivo en Nantes.|Je viens de France. J'habite à Nantes.
+A|¿Hablas español?|Parles-tu espagnol ?
+B|Un poco, pero estoy aprendiendo.|Un peu, mais j'apprends.`),
+DL('Au restaurant','Commander un repas',`
+A|Buenas tardes. ¿Qué desea tomar?|Bon après-midi. Que désirez-vous boire ?
+B|Quisiera un agua y una ensalada, por favor.|Je voudrais une eau et une salade, s'il vous plaît.
+A|¿Algo más?|Autre chose ?
+B|No, gracias. ¿Cuánto es?|Non, merci. C'est combien ?
+A|Son doce euros.|Ça fait douze euros.
+B|Aquí tiene. Muchas gracias.|Voilà. Merci beaucoup.`),
+DL('Demander son chemin','Dans la rue',`
+A|Perdone, ¿dónde está la estación?|Excusez-moi, où est la gare ?
+B|Siga recto y gire a la izquierda.|Continuez tout droit et tournez à gauche.
+A|¿Está lejos?|C'est loin ?
+B|No, está a cinco minutos andando.|Non, c'est à cinq minutes à pied.
+A|Muchas gracias por su ayuda.|Merci beaucoup pour votre aide.
+B|De nada. ¡Que tenga un buen día!|De rien. Bonne journée !`)
+],
+it:[
+DL('Se présenter','Première rencontre',`
+A|Ciao! Mi chiamo Anna. Come ti chiami?|Salut ! Je m'appelle Anna. Comment t'appelles-tu ?
+B|Ciao Anna! Mi chiamo Marco. Piacere.|Salut Anna ! Je m'appelle Marco. Enchanté.
+A|Piacere mio. Di dove sei?|Enchantée aussi. D'où viens-tu ?
+B|Sono francese e abito a Nantes.|Je suis français et j'habite à Nantes.
+A|Parli italiano?|Parles-tu italien ?
+B|Un po', ma sto imparando.|Un peu, mais j'apprends.`),
+DL('Au restaurant','Commander un repas',`
+A|Buonasera. Cosa desidera?|Bonsoir. Que désirez-vous ?
+B|Vorrei una pizza e un'acqua, per favore.|Je voudrais une pizza et une eau, s'il vous plaît.
+A|Altro?|Autre chose ?
+B|No, grazie. Il conto, per favore.|Non, merci. L'addition, s'il vous plaît.
+A|Sono venti euro.|Ça fait vingt euros.
+B|Ecco a lei. Grazie mille!|Voilà. Merci mille fois !`),
+DL('Demander son chemin','Dans la rue',`
+A|Scusi, dov'è la stazione?|Excusez-moi, où est la gare ?
+B|Vada dritto e giri a sinistra.|Allez tout droit et tournez à gauche.
+A|È lontana?|C'est loin ?
+B|No, è a cinque minuti a piedi.|Non, c'est à cinq minutes à pied.
+A|Grazie mille per l'aiuto.|Merci mille fois pour l'aide.
+B|Prego! Buona giornata!|De rien ! Bonne journée !`),
+DL('Réserver un voyage','À l\'agence de voyages',`
+A|Buongiorno, come posso aiutarla?|Bonjour, comment puis-je vous aider ?
+B|Vorrei prenotare una settimana al mare in agosto.|Je voudrais réserver une semaine à la mer en août.
+A|Preferisce la Sicilia o la Sardegna?|Préférez-vous la Sicile ou la Sardaigne ?
+B|Preferisco la Sardegna. Quanto costa?|Je préfère la Sardaigne. Combien ça coûte ?
+A|Novecento euro a persona, colazione inclusa.|Neuf cents euros par personne, petit-déjeuner inclus.
+B|Va bene, prenoto. Posso pagare con la carta?|D'accord, je réserve. Puis-je payer par carte ?`),
+DL("À la gare","Acheter un billet",`
+A|Buongiorno, vorrei un biglietto per Firenze.|Bonjour, je voudrais un billet pour Florence.
+B|Andata e ritorno?|Aller-retour ?
+A|Sì, per domani mattina.|Oui, pour demain matin.
+B|Il treno parte alle otto e dieci dal binario tre.|Le train part à 8h10 du quai trois.
+A|Quanto costa?|Combien ça coûte ?
+B|Trentacinque euro.|Trente-cinq euros.
+A|Va bene, pago con la carta.|D'accord, je paie par carte.`),
+DL("Chez le médecin","Une visite",`
+A|Buongiorno, dottore. Non mi sento bene.|Bonjour docteur. Je ne me sens pas bien.
+B|Che cosa ha?|Qu'avez-vous ?
+A|Ho mal di gola e un po' di febbre da due giorni.|J'ai mal à la gorge et un peu de fièvre depuis deux jours.
+B|Respiri profondamente... La gola è molto rossa.|Respirez profondément... La gorge est très rouge.
+A|È grave?|C'est grave ?
+B|No, è solo un'infezione. Le prescrivo una medicina.|Non, c'est juste une infection. Je vous prescris un médicament.
+A|La ringrazio, dottore.|Je vous remercie, docteur.`),
+DL("Parler de l'avenir","Après le lycée",`
+A|Che cosa farai dopo il liceo?|Que feras-tu après le lycée ?
+B|Mi iscriverò all'università, forse a Bologna.|Je m'inscrirai à l'université, peut-être à Bologne.
+A|Che cosa vuoi studiare?|Qu'est-ce que tu veux étudier ?
+B|Vorrei studiare lingue, perché mi piace viaggiare.|Je voudrais étudier les langues, parce que j'aime voyager.
+A|Quindi vivrai all'estero?|Donc tu vivras à l'étranger ?
+B|Spero di sì. Mi piacerebbe fare un anno in Italia.|Je l'espère. J'aimerais faire une année en Italie.`)
+]
+};
+
+/* ---------- prononciation ---------- */
+const PRON={
+en:[
+{t:'« th » sourd',n:'Place la pointe de la langue entre les dents et souffle, sans faire vibrer la voix. Ce n\'est pas un « s ».',ex:['think','thank you','three','mouth','Thursday']},
+{t:'« th » sonore',n:'Même position de la langue, mais avec la voix. Ce n\'est pas un « z » ni un « d ».',ex:['this','the','mother','weather','together']},
+{t:'Le « h » expiré',n:'En anglais, le « h » se prononce en soufflant, jamais muet comme en français (sauf hour, honest).',ex:['house','hello','happy','behind','who']},
+{t:'Les terminaisons -ed',n:'Trois prononciations : /t/ après un son sourd (worked), /d/ après un son sonore (played), /id/ après t ou d (wanted).',ex:['worked','played','wanted','needed','washed']},
+{t:'ship / sheep',n:'La voyelle courte /ɪ/ (ship, bit, live) s\'oppose à la longue /iː/ (sheep, beat, leave). Allonge bien la longue.',ex:['ship','sheep','bit','beat','live','leave']},
+{t:'Le « r » anglais',n:'Pas de « r » guttural : recourbe légèrement la langue vers l\'arrière sans toucher le palais.',ex:['red','right','car','three','around']},
+{t:'Le schwa /ə/',n:'La voyelle faible, la plus fréquente de l\'anglais : les syllabes non accentuées se « mangent ».',ex:['about','banana','teacher','today','different']},
+{t:'Lettres muettes',n:'Plusieurs lettres ne se prononcent pas : le k de knife, le w de write, le b de lamb.',ex:['knife','know','write','Wednesday','island']},
+{t:'L\'accent de mot',n:'Chaque mot a une syllabe accentuée, plus forte et plus longue. Elle change parfois le sens ou la classe du mot.',ex:['photograph','photographer','banana','important','record']}
+],
+es:[
+{t:'La jota (j, g + e/i)',n:'Un « h » fortement expiré, plus rauque que le français.',ex:['jamón','gente','Jorge','gitano']},
+{t:'Le h muet',n:'Le « h » ne se prononce jamais.',ex:['hola','hoy','hermano','hombre']},
+{t:'La ñ',n:'Comme « gn » dans montagne.',ex:['mañana','español','año','niño']},
+{t:'Le r roulé',n:'« rr » et « r » initial sont roulés avec la pointe de la langue.',ex:['perro','carro','rápido','rojo']},
+{t:'ll et y',n:'Proche de « y » dans yaourt (variable selon les pays).',ex:['calle','llamo','yo','playa']},
+{t:'Accent tonique et tilde',n:'Le tilde indique la syllabe accentuée et peut distinguer deux mots.',ex:['teléfono','café','estación','canción','sí']},
+{t:'b et v',n:'Se prononcent de la même façon, entre « b » et « v ».',ex:['vaso','banco','vivir','bonito']}
+],
+it:[
+{t:'c et g devant e / i',n:'« ci », « ce » = tchi, tché ; « gi », « ge » = dji, djé. Devant a, o, u : « ca » = ka, « ga » = ga.',ex:['ciao','cena','gelato','giro','giorno']},
+{t:'ch et gh',n:'« chi », « che » = ki, ké ; « ghi », « ghe » = gui, gué. Le h sert à garder le son dur.',ex:['chi','che','spaghetti','ghiaccio','pochi']},
+{t:'gli',n:'Un « l » mouillé, comme dans « ail » prononcé avec la langue plus haute.',ex:['figlio','famiglia','biglietto','gli','meglio']},
+{t:'gn',n:'Comme « gn » de montagne.',ex:['gnocchi','bagno','lasagna','signore']},
+{t:'Consonnes doubles',n:'Tiens la consonne plus longtemps : la durée change le sens du mot.',ex:['pala','palla','nono','nonno','caro','carro']},
+{t:'sc',n:'« sce », « sci » = ché, chi ; « sca », « sco », « scu » = ska, sko, sku.',ex:['scena','sci','pesce','scuola','scrivere']},
+{t:'La lettre z',n:'Prononcée « ts » ou « dz » selon les mots.',ex:['grazie','pizza','zero','zucchero']},
+{t:'Voyelles pures',n:'Toutes les voyelles sont prononcées et restent pures : pas de diphtongue. « u » = ou.',ex:['casa','mare','amico','sempre','uno']}
+]
+};
+/* ---------- bac blanc d'italien ---------- */
+const Q=(q,o,a)=>({q,o,a});
+const CONN=[`Prima di tutto… / Innanzitutto…`,`Inoltre… / Poi…`,`Tuttavia… / Però…`,`Infatti…`,`Per esempio…`,`Da una parte… dall'altra…`,`Secondo me… / A mio avviso…`,`Sono (non sono) d'accordo perché…`,`Dunque… / Quindi…`,`In conclusione… / Per concludere…`];
+const OPIN=[`Penso che + congiuntivo (Penso che sia importante)`,`Mi sembra che…`,`Dal mio punto di vista…`,`Il documento parla di…`,`L'autore vuole dimostrare che…`,`Un aspetto interessante è…`,`Personalmente, preferisco…`,`Se potessi, vorrei… (condizionale)`];
+const BAC={
+co:[
+{t:`Prenotare una vacanza`,niv:`B1`,script:[
+['A',`Buongiorno, agenzia Sole e Mare, sono Marta. Come posso aiutarla?`],
+['B',`Buongiorno, vorrei prenotare una settimana al mare in agosto, per due persone.`],
+['A',`Certo. Preferisce la Sicilia o la Sardegna?`],
+['B',`Preferisco la Sardegna, ma non voglio spendere più di mille euro a testa.`],
+['A',`Allora le consiglio un albergo vicino a Olbia. Costa novecento euro a persona, con colazione inclusa.`],
+['B',`Va bene. C'è la possibilità di affittare un'auto?`],
+['A',`Sì, con un supplemento di cinquanta euro. Si parte il dieci agosto e si torna il diciassette.`],
+['B',`Perfetto. Allora prenoto. Posso pagare con la carta?`]],
+qs:[
+Q(`Que souhaite faire la cliente ?`,[`Réserver une semaine à la mer en août pour deux personnes`,`Annuler un voyage déjà réservé`,`Louer un appartement à la montagne`],0),
+Q(`Quel est le budget maximal par personne ?`,[`500 euros`,`1000 euros`,`1500 euros`],1),
+Q(`Quelle destination est choisie ?`,[`La Sicile`,`La Sardaigne`,`La Toscane`],1),
+Q(`Que comprend le prix de l'hôtel ?`,[`Le petit-déjeuner`,`Le transport`,`La voiture`],0),
+Q(`Combien coûte la location de voiture ?`,[`Elle est gratuite`,`50 euros de supplément`,`150 euros par jour`],1)]},
+{t:`Giornata dell'ambiente`,niv:`B1`,script:[
+['A',`Ascoltate bene! Domenica prossima a Bologna si terrà la Giornata dell'ambiente. Dalle nove del mattino i volontari puliranno i parchi della città. Chi vuole partecipare deve portare dei guanti e una bottiglia d'acqua. Dopo il lavoro, alle dodici e mezza, ci sarà un pranzo gratuito per tutti nel parco centrale. Per i bambini sono previsti giochi e laboratori sul riciclaggio. Per iscriversi, basta visitare il sito del comune entro venerdì. Vi aspettiamo numerosi!`]],
+qs:[
+Q(`Quand a lieu la journée ?`,[`Dimanche prochain`,`Samedi prochain`,`Vendredi prochain`],0),
+Q(`Que font les volontaires ?`,[`Ils nettoient les parcs`,`Ils plantent des arbres`,`Ils distribuent des repas`],0),
+Q(`Que faut-il apporter ?`,[`Des gants et une bouteille d'eau`,`Un pique-nique`,`Rien du tout`],0),
+Q(`Que propose-t-on après le travail ?`,[`Un repas gratuit`,`Un concert`,`Une visite guidée`],0),
+Q(`Jusqu'à quand peut-on s'inscrire ?`,[`Jusqu'à vendredi`,`Jusqu'à dimanche matin`,`Jusqu'à lundi`],0)]},
+{t:`Studiare all'estero`,niv:`B1`,script:[
+['A',`Sai che l'anno prossimo vado a studiare in Spagna per sei mesi?`],
+['B',`Davvero? Che fortuna! Con quale programma?`],
+['A',`Con l'Erasmus. All'inizio ero preoccupato per la lingua, ma sto già studiando lo spagnolo ogni sera.`],
+['B',`Io invece non ho il coraggio di partire. Mi mancherebbero troppo la mia famiglia e i miei amici.`],
+['A',`Ti capisco, ma è un'esperienza che ti cambia la vita. Imparerai a cavartela da solo.`],
+['B',`Hai ragione. Forse l'anno dopo ci provo anch'io, magari in Germania.`]],
+qs:[
+Q(`Où va partir Luca ?`,[`En Espagne`,`En Allemagne`,`Au Portugal`],0),
+Q(`Pour combien de temps ?`,[`Six mois`,`Un an`,`Trois mois`],0),
+Q(`Dans quel cadre part-il ?`,[`Le programme Erasmus`,`Un stage en entreprise`,`Un échange de classe`],0),
+Q(`Pourquoi Sara hésite-t-elle ?`,[`Sa famille et ses amis lui manqueraient`,`Elle n'aime pas voyager`,`Elle manque d'argent`],0),
+Q(`Que pense faire Sara plus tard ?`,[`Partir en Allemagne l'année suivante`,`Renoncer définitivement`,`Aller aussi en Espagne`],0)]}
+,
+{t:`Un colloquio per un lavoro estivo`,niv:`B1`,script:[
+['A',`Buongiorno, si accomodi. Mi parli un po' di lei.`],
+['B',`Mi chiamo Giulia, ho diciotto anni e frequento l'ultimo anno di liceo. Cerco un lavoro per l'estate.`],
+['A',`Ha già lavorato in un bar o in un negozio?`],
+['B',`Sì, l'estate scorsa ho lavorato in una gelateria per due mesi.`],
+['A',`Bene. Qui si lavora dal martedì alla domenica, dalle dieci alle sei.`],
+['B',`Va bene. Quanto è lo stipendio?`],
+['A',`Sono mille euro al mese. Può iniziare il primo giugno?`],
+['B',`Sì, certo. Devo portare dei documenti?`],
+['A',`Solo la carta d'identità e il codice fiscale.`]],
+qs:[
+Q(`Pourquoi Giulia cherche-t-elle un travail ?`,[`Elle a abandonné le lycée`,`Elle veut un job pour l'été`,`Elle veut un emploi permanent`],1),
+Q(`Quelle expérience a-t-elle ?`,[`Aucune expérience`,`Un an dans un restaurant`,`Deux mois dans une glacerie l'été dernier`],2),
+Q(`Quels sont les jours de travail ?`,[`Du mardi au dimanche`,`Du lundi au vendredi`,`Le week-end seulement`],0),
+Q(`Quel est le salaire ?`,[`800 euros par mois`,`1000 euros par mois`,`1500 euros par mois`],1),
+Q(`Que doit-elle apporter ?`,[`Un CV et une lettre`,`Un diplôme`,`Sa carte d'identité et son code fiscal`],2)]},
+{t:`Annuncio della scuola`,niv:`B1`,script:[
+['A',`Ascoltate l'annuncio della scuola. Lunedì prossimo non ci saranno lezioni a causa dello sciopero dei trasporti. Gli studenti dovranno recuperare le ore perse sabato mattina, dalle otto alle dodici. La gita a Napoli, prevista per giovedì, è rinviata al mese di maggio. Chi desidera annullare la partecipazione deve avvisare la segreteria entro venerdì.`]],
+qs:[
+Q(`Pourquoi n'y a-t-il pas cours lundi ?`,[`À cause d'une grève des transports`,`À cause de la neige`,`À cause d'un jour férié`],0),
+Q(`Quand faut-il rattraper les cours ?`,[`Dimanche après-midi`,`Samedi matin`,`Mercredi soir`],1),
+Q(`Que devient la sortie à Naples ?`,[`Elle est annulée`,`Elle a lieu jeudi`,`Elle est reportée en mai`],2),
+Q(`Jusqu'à quand peut-on annuler sa participation ?`,[`Jusqu'à vendredi`,`Jusqu'à lundi`,`Jusqu'à jeudi`],0),
+Q(`Qui faut-il prévenir ?`,[`Le professeur principal`,`Le secrétariat`,`Le directeur`],1)]}
+],
+ce:[
+{t:`Il telefono in classe`,niv:`B1`,text:`In molte scuole italiane il cellulare è vietato durante le lezioni. Il ministero dell'Istruzione ha ricordato che gli studenti non possono usare il telefono in classe, nemmeno per cercare informazioni, salvo autorizzazione del professore.\n\nSecondo alcuni insegnanti, la regola ha migliorato la concentrazione e i rapporti tra i ragazzi, che durante l'intervallo tornano a parlare tra loro. Altri, invece, pensano che il divieto sia superato: oggi lo smartphone è anche uno strumento di studio, utile per consultare dizionari e mappe.\n\nGli studenti sono divisi. Chiara, 17 anni, dice: «Capisco la regola, ma preferirei imparare a usare bene il telefono, non a non usarlo». Per ora la discussione resta aperta.`,
+qs:[
+Q(`Que rappelle le ministère ?`,[`Le portable est interdit en classe sauf autorisation du professeur`,`Le portable est obligatoire pour les devoirs`,`Le portable est autorisé pendant les cours`],0),
+Q(`Quel effet positif certains enseignants constatent-ils ?`,[`Une meilleure concentration et plus d'échanges entre élèves`,`De meilleures notes en mathématiques`,`Moins de devoirs à la maison`],0),
+Q(`Quel est l'argument des opposants à l'interdiction ?`,[`Le smartphone est aussi un outil de travail`,`Le téléphone coûte trop cher`,`Les élèves sont trop fatigués`],0),
+Q(`Quelle est la position de Chiara ?`,[`Elle voudrait apprendre à bien utiliser le téléphone`,`Elle refuse toute règle`,`Elle n'a pas de portable`],0),
+Q(`Où en est le débat ?`,[`Il reste ouvert`,`Une loi vient d'être votée`,`La règle a été supprimée`],0)]},
+{t:`Una città senza auto`,niv:`B1`,text:`Da gennaio, il centro storico di una piccola città toscana è chiuso alle automobili. I residenti possono entrare solo con un permesso speciale. Il sindaco spiega che l'obiettivo è ridurre l'inquinamento e rendere le strade più sicure per i pedoni e per i ciclisti.\n\nDopo tre mesi, i negozianti sono divisi: alcuni dicono di aver guadagnato nuovi clienti, perché la gente passeggia più volentieri; altri lamentano che gli anziani e le persone con difficoltà di movimento non riescono più ad arrivare facilmente.\n\nPer questo il comune ha attivato un servizio di navette elettriche gratuite, che passano ogni dieci minuti. I primi risultati sono incoraggianti: l'aria è più pulita e nelle vie si sente meno rumore.`,
+qs:[
+Q(`Que s'est-il passé en janvier ?`,[`Le centre historique a été fermé aux voitures`,`Un nouveau parking a ouvert`,`Un tramway a été inauguré`],0),
+Q(`Qui peut entrer en voiture ?`,[`Les résidents avec un permis spécial`,`Tout le monde`,`Seulement les taxis`],0),
+Q(`Quel est l'objectif du maire ?`,[`Réduire la pollution et sécuriser les rues`,`Augmenter les impôts`,`Attirer plus de voitures`],0),
+Q(`Quel problème certains commerçants soulignent-ils ?`,[`Les personnes âgées ou à mobilité réduite accèdent difficilement au centre`,`Les loyers ont augmenté`,`Les touristes sont partis`],0),
+Q(`Quelle solution la commune a-t-elle mise en place ?`,[`Des navettes électriques gratuites toutes les dix minutes`,`Des bus payants`,`Des places de parking gratuites`],0)]},
+{t:`Giovani e volontariato`,niv:`B1`,text:`Sempre più giovani italiani dedicano alcune ore della settimana al volontariato. Secondo un'indagine recente, un ragazzo su quattro tra i quindici e i venticinque anni partecipa ad attività di aiuto: assiste gli anziani, distribuisce pasti ai senzatetto o aiuta i bambini con i compiti.\n\nMarco, 19 anni, racconta: «All'inizio l'ho fatto per ottenere un credito scolastico, poi ho continuato perché mi fa sentire utile». Gli esperti sottolineano che queste esperienze sviluppano il senso di responsabilità e aiutano a scoprire una vocazione professionale.\n\nTuttavia, avvertono, bisogna evitare che il volontariato sostituisca i servizi pubblici, che restano un dovere dello Stato.`,
+qs:[
+Q(`Quelle proportion de jeunes fait du bénévolat ?`,[`Un sur quatre`,`Un sur dix`,`La moitié`],0),
+Q(`Quels exemples d'activités sont cités ?`,[`Aide aux personnes âgées, repas aux sans-abri, aide aux devoirs`,`Sport et musique`,`Travail de nuit`],0),
+Q(`Pourquoi Marco a-t-il commencé ?`,[`Pour obtenir un crédit scolaire`,`Pour gagner de l'argent`,`Par obligation familiale`],0),
+Q(`Que développent ces expériences selon les experts ?`,[`Le sens des responsabilités et une vocation professionnelle`,`La rapidité`,`L'esprit de compétition`],0),
+Q(`Quelle mise en garde formulent-ils ?`,[`Le bénévolat ne doit pas remplacer les services publics`,`Il faut le rendre obligatoire`,`Il faut le payer`],0)]}
+,
+{t:`Lo smart working`,niv:`B1`,text:`Dopo la pandemia, molte aziende italiane hanno adottato lo smart working, cioè il lavoro da casa per uno o più giorni alla settimana. Secondo un'indagine, circa un lavoratore su tre desidera mantenere questa formula, perché permette di risparmiare tempo e denaro sugli spostamenti e di conciliare meglio lavoro e famiglia.\n\nTuttavia, non mancano i problemi. Alcuni lavoratori dicono di sentirsi isolati e di non riuscire a staccare la sera. Per questo molte imprese propongono una soluzione intermedia: due o tre giorni in ufficio e il resto a casa.\n\nGli esperti ricordano che il lavoro a distanza funziona solo se esistono regole chiare sugli orari e sugli obiettivi da raggiungere.`,
+qs:[
+Q(`Quelle proportion de travailleurs veut garder le télétravail ?`,[`Environ un sur trois`,`La moitié`,`Presque tous`],0),
+Q(`Quels avantages sont cités ?`,[`Un meilleur salaire`,`Moins de réunions`,`Gain de temps et d'argent sur les trajets, meilleur équilibre avec la famille`],2),
+Q(`Quel problème certains travailleurs signalent-ils ?`,[`L'isolement et la difficulté à déconnecter le soir`,`Un matériel trop cher`,`Un manque de travail`],0),
+Q(`Quelle solution intermédiaire est proposée ?`,[`Travailler uniquement de chez soi`,`Deux ou trois jours au bureau et le reste à la maison`,`Travailler le week-end`],1),
+Q(`Que rappellent les experts ?`,[`Qu'il faut des règles claires sur les horaires et les objectifs`,`Que le télétravail doit être obligatoire`,`Que le bureau est dépassé`],0)]},
+{t:`Lo sport a scuola`,niv:`B1`,text:`In Italia le ore di educazione fisica a scuola sono tra le più basse d'Europa: in media due alla settimana, e in molte scuole elementari anche meno. Per questo il governo ha deciso di introdurre un insegnante di sport anche nella scuola primaria, a partire dal prossimo anno.\n\nI medici sono favorevoli: un bambino su quattro in Italia è in sovrappeso e passa troppo tempo davanti a uno schermo. Alcuni genitori, però, temono che le ore di sport tolgano spazio alle materie tradizionali.\n\nLe scuole che hanno già fatto la prova riferiscono che i bambini sono più attenti e più sereni. Nonostante ciò, mancano ancora le palestre in molte zone del paese.`,
+qs:[
+Q(`Combien d'heures d'éducation physique en moyenne par semaine ?`,[`Quatre`,`Deux`,`Cinq`],1),
+Q(`Quelle décision le gouvernement a-t-il prise ?`,[`Introduire un enseignant de sport à l'école primaire`,`Supprimer l'éducation physique`,`Rendre le sport payant`],0),
+Q(`Pourquoi les médecins sont-ils favorables ?`,[`Parce que le sport améliore les notes`,`Parce qu'un enfant sur quatre est en surpoids et passe trop de temps devant un écran`,`Parce que les enseignants le demandent`],1),
+Q(`Que craignent certains parents ?`,[`Que le sport prenne la place des matières traditionnelles`,`Que le sport soit trop dangereux`,`Que les cours coûtent plus cher`],0),
+Q(`Quel obstacle subsiste ?`,[`Le manque d'enseignants`,`Le manque de gymnases dans de nombreuses zones`,`Le manque d'élèves`],1)]}
+],
+ee:[
+{t:`Un'email a un amico`,min:110,max:150,cons:`Tu as passé un week-end dans une ville italienne. Écris un e-mail à un ami italien pour raconter ce que tu as fait et l'inviter à venir avec toi la prochaine fois.`,it:`Hai passato un fine settimana in una città italiana. Scrivi un'email a un amico italiano: racconta cosa hai fatto e invitalo a venire con te la prossima volta.`,
+aide:[`Passato prossimo: ho visitato, sono salito, abbiamo mangiato`,`Imperfetto pour décrire: faceva bel tempo, c'era molta gente`,`Invitation: Ti va di venire? Perché non vieni con me?`,`Formules: Caro… / Un abbraccio / A presto`],
+mod:`Caro Luca, come stai? Ti scrivo da Firenze, dove ho passato un fine settimana magnifico. Sabato mattina ho visitato gli Uffizi e nel pomeriggio ho fatto una passeggiata lungo l'Arno, mangiando un gelato buonissimo. La sera ho cenato in una piccola trattoria: la bistecca alla fiorentina era davvero deliziosa! Domenica sono salito sulla cupola del Duomo e la vista era spettacolare. Purtroppo il tempo è passato troppo in fretta. Perché non vieni con me la prossima volta? Potremmo partire a maggio, quando il clima è piacevole, e visitare anche Siena. Fammi sapere se ti va l'idea. Un abbraccio, Anna`},
+{t:`Il cellulare e i giovani`,min:130,max:170,cons:`Le téléphone portable est-il utile ou dangereux pour les jeunes ? Donne ton opinion dans un texte argumenté.`,it:`Il telefono cellulare è utile o pericoloso per i giovani? Esprimi la tua opinione in un testo argomentato.`,
+aide:[`Introduction: Oggi quasi tutti i giovani hanno un cellulare…`,`Argument 1 / 2 + exemple`,`Concession: È vero che… tuttavia…`,`Conclusion: In conclusione, penso che…`],
+mod:`Oggi quasi tutti i giovani hanno un cellulare e lo usano per ore ogni giorno. Ma è davvero utile o è soltanto un pericolo? Prima di tutto, il telefono permette di restare in contatto con la famiglia e con gli amici, e offre molte risorse per studiare, come dizionari, video e applicazioni. Inoltre, in caso di emergenza può essere molto utile. Tuttavia, bisogna riconoscere che un uso eccessivo può causare problemi: molti ragazzi dormono meno, si concentrano con più difficoltà e si confrontano continuamente con gli altri sui social. Secondo me, il cellulare non è né buono né cattivo: dipende da come lo si usa. Per questo penso che i genitori e la scuola debbano insegnare ai giovani a usarlo con moderazione. In conclusione, un uso consapevole rende il telefono un alleato, non un nemico.`},
+{t:`Una lettera di motivazione`,min:120,max:160,cons:`Tu souhaites participer à un échange scolaire en Italie. Écris une lettre à l'école italienne pour te présenter et expliquer tes motivations.`,it:`Vuoi partecipare a uno scambio scolastico in Italia. Scrivi una lettera alla scuola italiana per presentarti e spiegare le tue motivazioni.`,
+aide:[`Formule: Gentili signori, / Distinti saluti`,`Présentation: Mi chiamo… ho diciassette anni… frequento il liceo`,`Motivation: Vorrei… perché… sono interessato/a a…`,`Remerciement: La ringrazio in anticipo per…`],
+mod:`Gentili signori, mi chiamo Chloé, ho diciassette anni e frequento l'ultimo anno di liceo a Nantes. Vi scrivo perché vorrei partecipare allo scambio scolastico con la vostra scuola. Studio l'italiano da quattro anni e mi piace molto la vostra cultura, soprattutto la musica, l'arte e la cucina. Vorrei migliorare il mio livello parlando ogni giorno con ragazzi italiani e scoprire un altro modo di vivere e di studiare. Inoltre, sono una persona aperta e curiosa, e mi adatto facilmente alle situazioni nuove. Sono sicura che questa esperienza sarebbe molto importante per il mio futuro. Vi ringrazio in anticipo per l'attenzione e spero di ricevere presto una vostra risposta. Distinti saluti, Chloé Martin`},
+{t:`Un ricordo di viaggio`,min:120,max:160,cons:`Raconte un souvenir de voyage ou de vacances qui t'a marqué(e). Utilise le passé.`,it:`Racconta un ricordo di viaggio o di vacanze che ti è rimasto nel cuore.`,
+aide:[`Cadre: Era l'estate scorsa… avevo quindici anni…`,`Événements: Ad un tratto… poi… alla fine…`,`Sentiments: ero emozionato/a, mi sono sentito/a…`,`Conclusion: Non dimenticherò mai…`],
+mod:`Era l'estate di due anni fa e avevo quindici anni. Con la mia famiglia siamo andati in Puglia, in una piccola casa vicino al mare. Ogni mattina ci svegliavamo presto e andavamo in spiaggia, dove l'acqua era limpida e il cielo senza nuvole. Un giorno, però, abbiamo deciso di visitare Alberobello. Quando siamo arrivati, sono rimasta senza parole: le case bianche con il tetto a cono sembravano uscite da una fiaba. Abbiamo mangiato le orecchiette in una trattoria e abbiamo parlato a lungo con la proprietaria, che ci ha raccontato la storia del paese. Alla sera ero stanchissima ma felice. Non dimenticherò mai quel viaggio, perché ho capito quanto sia bello scoprire luoghi nuovi con le persone che si amano.`}
+,
+{t:`Una lettera al giornale`,min:130,max:170,cons:`Écris une lettre à un journal local pour donner ton avis sur la fermeture du cinéma de ton quartier.`,it:`Scrivi una lettera al giornale locale per esprimere la tua opinione sulla chiusura del cinema del tuo quartiere.`,
+aide:[`Formule : Egregio direttore, … / Distinti saluti`,`Exposer le fait : Ho saputo che il cinema chiuderà…`,`Arguments : Prima di tutto… Inoltre…`,`Proposition : Sarebbe meglio se…`],
+mod:`Egregio direttore, ho saputo con dispiacere che il cinema del nostro quartiere chiuderà alla fine del mese e le scrivo per esprimere la mia opinione. Prima di tutto, quel cinema non era soltanto una sala di proiezione: era un luogo di incontro dove i ragazzi e gli anziani potevano trascorrere una serata insieme a un prezzo accessibile. Inoltre, la sua chiusura renderà più difficile per noi giovani uscire la sera, perché il cinema più vicino si trova a venti chilometri. È vero che molte persone guardano i film a casa in streaming, tuttavia vedere un film su un grande schermo è un'esperienza diversa. Sarebbe meglio se il comune aiutasse la gestione con un contributo, oppure organizzasse proiezioni gratuite per le scuole. Spero che si trovi presto una soluzione. La ringrazio per l'attenzione e le porgo distinti saluti.`},
+{t:`Il futuro dopo il liceo`,min:120,max:160,cons:`Parle de tes projets après le bac et explique pourquoi tu as fait ces choix.`,it:`Racconta quali sono i tuoi progetti per il futuro dopo la maturità e spiega perché.`,
+aide:[`Futur : Dopo la maturità mi iscriverò… / Farò…`,`Conditionnel : Mi piacerebbe… / Vorrei…`,`Raisons : perché… visto che…`,`Doutes : Ho ancora qualche dubbio…`],
+mod:`Dopo la maturità mi iscriverò all'università, perché vorrei lavorare nel campo delle lingue. Mi piacerebbe studiare a Bologna, che è una città viva e piena di giovani, ma per ora non ho ancora deciso. Prima di cominciare, farò un viaggio in Italia con le mie amiche: sarà una bella occasione per migliorare il mio italiano e conoscere meglio la cultura del paese. Ho ancora qualche dubbio sul mio futuro, perché non so se riuscirò a trovare un lavoro che mi piaccia davvero. Tuttavia, penso che studiare ciò che si ama sia la scelta migliore. Se avrò la possibilità, vorrei anche trascorrere un anno all'estero con il programma Erasmus. Il futuro mi preoccupa un po', ma sono molto motivata.`}
+],
+eo:[
+{t:`Social network e adolescenti`,doc:`Secondo un sondaggio, i ragazzi italiani passano in media tre ore al giorno sui social. Molti dicono che permettono di restare in contatto con gli amici, ma una parte sente di perdere tempo e di confrontarsi troppo con gli altri.`,cons:`Présente le document, dégage les idées principales puis donne ton opinion.`,
+qs:[`Quali social usi di più e perché?`,`Pensi che i social rendano le persone più sole?`,`Hai mai deciso di staccarti dal telefono? Com'è andata?`,`Quali regole daresti ai genitori?`,`Come cambierà la comunicazione tra dieci anni?`]},
+{t:`Ambiente e vita quotidiana`,doc:`Molte città italiane promuovono la raccolta differenziata e le piste ciclabili. I cittadini sono invitati a ridurre la plastica e a usare i mezzi pubblici. Ma non tutti rispettano le regole, e cambiare le abitudini non è facile.`,cons:`Présente le document, explique le problème posé et défends ton point de vue.`,
+qs:[`Cosa fai tu ogni giorno per l'ambiente?`,`Perché è difficile cambiare le abitudini?`,`Chi deve fare di più: i cittadini o i governi?`,`Come immagini la città ideale?`,`Hai mai partecipato a un'iniziativa ecologica?`]},
+{t:`Viaggiare e scoprire altre culture`,doc:`Ogni anno milioni di turisti visitano l'Italia per l'arte, la cucina e il paesaggio. Viaggiare permette di conoscere nuove culture, ma il turismo di massa può danneggiare i luoghi più fragili, come Venezia.`,cons:`Présente le document et discute des avantages et des limites du tourisme.`,
+qs:[`Qual è il viaggio più bello che hai fatto?`,`Perché è importante conoscere altre culture?`,`Quali problemi crea il turismo di massa?`,`Preferisci viaggiare da solo o in gruppo?`,`Dove vorresti andare in futuro e perché?`]},
+{t:`La scuola di domani`,doc:`In Italia e in Francia si discute di come rendere la scuola più moderna: più tecnologia, meno compiti a casa, più attività pratiche. Alcuni temono però che gli studenti perdano la capacità di concentrarsi.`,cons:`Présente le document et dis comment tu imagines l'école de demain.`,
+qs:[`Cosa cambieresti nella tua scuola?`,`I compiti a casa sono utili?`,`Che ruolo ha la tecnologia nell'apprendimento?`,`Come immagini il lavoro del professore tra vent'anni?`,`Che cosa pensi di fare dopo il liceo?`]},
+{t:`Il lavoro e i giovani`,doc:`Molti giovani europei cercano un lavoro che unisca stipendio, passione e tempo libero. Ma il mercato è difficile: i contratti sono spesso precari e molti ragazzi vanno a lavorare all'estero.`,cons:`Présente le document, explique la situation et exprime ce que tu attends de ton futur métier.`,
+qs:[`Che lavoro vorresti fare e perché?`,`Cosa conta di più per te: lo stipendio o la passione?`,`Andresti a lavorare all'estero?`,`Hai già avuto un'esperienza di lavoro?`,`Quali qualità servono per trovare lavoro oggi?`]},
+{t:`La famiglia e le tradizioni`,doc:`In Italia la famiglia ha un ruolo centrale: i pranzi della domenica, le feste e le tradizioni riuniscono più generazioni. Oggi però i ritmi di vita e il lavoro rendono più difficile ritrovarsi.`,cons:`Présente le document et compare avec ta propre expérience en France.`,
+qs:[`Com'è una domenica tipica nella tua famiglia?`,`Quali tradizioni sono importanti per te?`,`Perché oggi è più difficile passare del tempo insieme?`,`Cosa pensi del rapporto tra giovani e nonni?`,`Quali tradizioni vorresti conservare in futuro?`]},
+{t:`Lo sport e la salute`,doc:`Secondo un rapporto recente, quasi la metà degli adolescenti italiani non pratica nessuno sport in modo regolare. Eppure i medici ricordano che muoversi ogni giorno fa bene al corpo e alla mente. Le scuole propongono corsi pomeridiani, ma non sempre i ragazzi hanno voglia di partecipare.`,cons:`Présente le document, explique le problème et donne ton avis sur les solutions possibles.`,
+qs:[`Perché secondo te molti giovani non fanno sport?`,`Tu pratichi uno sport? Quali benefici ne trai?`,`La scuola dovrebbe rendere lo sport obbligatorio?`,`Meglio uno sport di squadra o individuale?`,`Come motivare chi non ha voglia?`]},
+{t:`Il lavoro dei giovani`,doc:`In Italia molti giovani laureati trovano lavoro con difficoltà e spesso con contratti temporanei. Alcuni decidono di partire all'estero per cercare migliori opportunità, altri creano una piccola impresa. Il dibattito sul futuro dei giovani è sempre più acceso.`,cons:`Présente le document, dégage la problématique et exprime ton avis.`,
+qs:[`Perché secondo te molti giovani lasciano il paese?`,`Quale lavoro ti piacerebbe fare e perché?`,`Lavorare mentre si studia è una buona idea?`,`Cosa dovrebbe fare lo Stato per aiutare i giovani?`,`Preferisci un lavoro sicuro o appassionante?`]},
+{t:`Tradizioni e modernità`,doc:`Le feste tradizionali italiane, come il Carnevale o il Palio di Siena, attirano ogni anno migliaia di visitatori. Alcuni pensano che queste tradizioni siano un tesoro da proteggere, altri che rischino di diventare solo uno spettacolo per i turisti.`,cons:`Présente le document et discute de la place des traditions dans le monde moderne.`,
+qs:[`Quali tradizioni sono importanti nella tua famiglia?`,`Il turismo aiuta o danneggia le tradizioni?`,`Perché è importante conservare il passato?`,`Le tradizioni devono cambiare con il tempo?`,`Qual è una tradizione del tuo paese che vorresti far conoscere?`]}
+]
+};
+
+/* ---------- profils et stockage ---------- */
+const today=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5);
+const INT=[0,1,2,4,8,16,32];
+let DB={cur:null,profiles:{}};
+function normalize(p){
+  p.name=p.name||'Moi';p.log=p.log||{};p.learned=p.learned||{};if(typeof p.goal!=='number')p.goal=10;
+  p.done=p.done||{};p.srs=p.srs||{};p.stats=p.stats||{};p.lvl=p.lvl||{};p.reinforce=p.reinforce||{};
+  p.course=COURSES[p.course]?p.course:'en';
+  p.set=Object.assign({eng:'auto',voice:'buttery',rate:1,uk:false,force:false,bv:{}},p.set||{});
+  p.bac=Object.assign({hist:[],seen:{}},p.bac||{});
+  if(p.weak){for(const id in p.weak)if(!p.srs[id])p.srs[id]={b:0,d:today()};delete p.weak}
+  return p;
+}
+function newProfile(name){
+  const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  DB.profiles[id]=normalize({name:name});
+  return id;
+}
+try{
+  const raw=localStorage.getItem('apprendre-v2');
+  if(raw){const d=JSON.parse(raw);if(d&&d.profiles)DB=d}
+  else{
+    const old=localStorage.getItem('apprendre-v1');
+    if(old){const id='p'+Date.now().toString(36);DB.profiles[id]=normalize(Object.assign({name:'Moi'},JSON.parse(old)));DB.cur=id}
+  }
+}catch(e){}
+for(const id in DB.profiles)normalize(DB.profiles[id]);
+let store=null;
+function save(){try{localStorage.setItem('apprendre-v2',JSON.stringify(DB))}catch(e){}}
+let _lt=0,_ls=0;
+function dayLog(){const d=today();return store.log[d]||(store.log[d]={s:0,n:0,ok:0})}
+function _act(){
+  if(!store)return;
+  const n=Date.now();
+  if(_lt&&n-_lt<90000)dayLog().s+=Math.round((n-_lt)/1000);
+  _lt=n;
+  if(n-_ls>15000){_ls=n;save()}
+}
+['pointerdown','keydown','input'].forEach(e=>document.addEventListener(e,_act,true));
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&store)save()});
+const minsToday=()=>store&&store.log[today()]?Math.round(store.log[today()].s/60):0;
+function useProfile(id){DB.cur=id;store=normalize(DB.profiles[id]);save()}
+let S=null;
+const app=document.getElementById('app');
+COURSES.en.code='en';COURSES.es.code='es';COURSES.it.code='it';
+COURSES.en.art=/^the /;COURSES.es.art=/^(el |la |los |las |un |una )/;COURSES.it.art=/^(il |lo |l'|la |i |gli |le |un |uno |una )/;
+COURSES.es.chars=['¿','¡','ñ','á','é','í','ó','ú'];COURSES.it.chars=['à','è','é','ì','ò','ù'];
+const FR={code:'fr',lang:'fr-FR'};
+const CC=()=>COURSES[store.course];
+
+/* ---------- utilitaires ---------- */
+function h(tag,attrs,...kids){
+  const e=document.createElement(tag);
+  for(const k in attrs||{}){
+    if(k==='class')e.className=attrs[k];
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),attrs[k]);
+    else e.setAttribute(k,attrs[k]);
+  }
+  kids.flat(2).forEach(c=>{if(c==null||c===false)return;e.append(c.nodeType?c:document.createTextNode(c))});
+  return e;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const norm=s=>s.toLowerCase().replace(/œ/g,'oe').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[¿?¡!.,;:"“”«»]/g,'').replace(/[’']/g,"'").replace(/\s+/g,' ').trim();
+function accept(input,expected,c){
+  const u=norm(input),e=norm(expected);
+  return u===e||u===e.replace(c.art,'');
+}
+function similarity(a,b){
+  const A=norm(a).split(' ').filter(Boolean),B=norm(b).split(' ').filter(Boolean);
+  if(!A.length||!B.length)return 0;
+  const dp=Array.from({length:A.length+1},()=>Array(B.length+1).fill(0));
+  for(let i=1;i<=A.length;i++)for(let j=1;j<=B.length;j++)dp[i][j]=A[i-1]===B[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  return dp[A.length][B.length]/Math.max(A.length,B.length);
+}
+function bar(back,title){return h('div',{class:'bar'},h('button',{class:'x','aria-label':'Retour',onclick:back},'←'),title?h('b',{class:'bt'},title):null)}
+
+/* ---------- audio : voix Claude (capacité tts) puis voix du navigateur ---------- */
+let capTts=null,capDict=null,capSample=null,ttsOff=false,speakTok=0;
+try{
+  if(window.claude&&window.claude.use){
+    window.claude.use('tts').then(t=>{capTts=t||null}).catch(()=>{});
+    window.claude.use('dictation').then(d=>{capDict=d||null}).catch(()=>{});
+    window.claude.use('sample').then(s=>{capSample=s||null}).catch(()=>{});
+  }
+}catch(e){}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const canSpeak='speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined';
+if(canSpeak){try{speechSynthesis.getVoices()}catch(e){}}
+const audioPossible=()=>!!(capTts&&!ttsOff)||canSpeak;
+function hasVoice(lang){
+  try{return canSpeak&&speechSynthesis.getVoices().some(v=>v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))}catch(e){return false}
+}
+const audioOK=c=>!!(capTts&&!ttsOff)||hasVoice(c.lang)||store.set.force;
+const micAvailable=()=>!!capDict||!!SR;
+const langTag=c=>c.code==='en'&&store.set.uk?'en-GB':(c.code==='en'?'en-US':c.lang);
+function pickVoice(c,lang){
+  try{
+    const vs=speechSynthesis.getVoices(),pref=store.set.bv[c.code];
+    let v=pref&&vs.find(x=>x.voiceURI===pref);if(v)return v;
+    v=vs.find(x=>x.lang.replace('_','-').toLowerCase()===lang.toLowerCase());
+    return v||vs.find(x=>x.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))||null;
+  }catch(e){return null}
+}
+let audioErr='',lastToast=0;
+function audioHelp(){
+  if(['not-allowed','audio-busy'].includes(audioErr))return 'Le navigateur bloque le son. Touche directement un bouton 🔊, puis réessaie.';
+  if(['no-start','absent','synthesis-unavailable','synthesis-failed','language-unavailable','voice-unavailable'].includes(audioErr))return 'Aucune voix de synthèse ne répond sur cet appareil. Installe une voix pour la langue dans les réglages du téléphone (accessibilité, synthèse vocale), vérifie le volume et le mode silencieux, puis fais ⚙ → Tester la voix.';
+  return 'Le son n\'a pas démarré ('+(audioErr||'erreur')+'). Vérifie le volume et le mode silencieux.';
+}
+function toast(msg){
+  const now=Date.now();if(now-lastToast<8000)return;lastToast=now;
+  const t=h('div',{class:'toast'},msg);document.body.append(t);setTimeout(()=>t.remove(),9000);
+}
+function browserSpeak(text,c,rate,o){
+  return new Promise(res=>{
+    if(!canSpeak){audioErr='absent';res(false);return}
+    try{
+      const ss=speechSynthesis,busy=ss.speaking||ss.pending;
+      if(busy)ss.cancel();
+      try{ss.resume()}catch(e){}
+      const u=new SpeechSynthesisUtterance(text),lang=langTag(c);
+      u.lang=lang;u.rate=Math.min(1.5,Math.max(.4,.9*rate));if(o&&o.pitch)u.pitch=o.pitch;
+      const v=pickVoice(c,lang);if(v)u.voice=v;
+      let done=false,started=false,t,st;
+      const fin=ok=>{if(!done){done=true;clearTimeout(t);clearTimeout(st);res(ok)}};
+      u.onstart=()=>{started=true;clearTimeout(st)};
+      u.onend=()=>{audioErr='';fin(true)};
+      u.onerror=e=>{const er=(e&&e.error)||'erreur';if(er==='canceled'||er==='interrupted'){fin(false);return}audioErr=er;fin(false)};
+      st=setTimeout(()=>{if(!started){audioErr='no-start';try{ss.cancel()}catch(e){}fin(false)}},4000);
+      t=setTimeout(()=>fin(true),Math.max(3000,text.length*170/Math.max(.5,rate)+1500));
+      const go=()=>{try{ss.speak(u)}catch(e){audioErr='erreur';fin(false)}};
+      if(busy)setTimeout(go,150);else go();
+    }catch(e){audioErr='erreur';res(false)}
+  });
+}
+async function speakAsync(text,c,o){
+  o=o||{};
+  const rate=(o.rate||1)*(store.set.rate||1);
+  const my=++speakTok;
+  if(capTts&&!ttsOff&&store.set.eng!=='browser'){
+    try{
+      await capTts.speak(text,{language:c.code==='en'&&store.set.uk?'en-GB':c.code,rate:Math.min(1.5,Math.max(.7,rate)),voice:o.voice||store.set.voice});
+      return my===speakTok||true;
+    }catch(e){
+      const code=e&&e.code;
+      if(code==='not_granted'){ttsOff=true;return false}
+      if(code==='stopped'||code==='busy'||code==='no_gesture')return false;
+    }
+  }
+  return browserSpeak(text,c,rate,o);
+}
+function stopSpeak(){
+  speakTok++;
+  try{if(capTts)capTts.stop().catch(()=>{})}catch(e){}
+  try{if(canSpeak)speechSynthesis.cancel()}catch(e){}
+}
+function say(text,rate,c){speakAsync(text,c||CC(),{rate}).then(ok=>{if(ok===false&&audioErr)toast(audioHelp())}).catch(()=>{})}
+function speakBtn(text,c){
+  if(!audioPossible())return null;
+  return h('div',{class:'spkgrp'},
+    h('button',{class:'spk','aria-label':'Écouter',onclick:()=>say(text,1,c)},'🔊'),
+    h('button',{class:'spk','aria-label':'Écouter lentement',onclick:()=>say(text,.7,c)},'🐢'));
+}
+
+/* ---------- reconnaissance vocale (dictée Claude, sinon navigateur) ---------- */
+function recognizeStart(c,cb){
+  let finished=false;const unsubs=[];
+  const fin=(text,reason)=>{if(finished)return;finished=true;unsubs.forEach(f=>{try{f()}catch(e){}});cb.end(text,reason)};
+  if(capDict){
+    let buf='';
+    try{
+      unsubs.push(capDict.onPartial(e=>cb.partial&&cb.partial((buf+' '+(e.text||'')).trim())));
+      unsubs.push(capDict.onFinal(e=>{buf+=e.text||'';cb.partial&&cb.partial(buf.trim())}));
+      unsubs.push(capDict.onState(e=>{if(e.state==='idle')setTimeout(()=>fin(buf.trim(),e.reason||'stopped'),350)}));
+      capDict.start({language:c.code}).catch(err=>fin('',(err&&err.code)||'upstream_error'));
+    }catch(e){fin('','unavailable')}
+    return {stop:()=>{try{capDict.stop().catch(()=>{})}catch(e){}}};
+  }
+  if(SR){
+    try{
+      const r=new SR();r.lang=c.lang;r.interimResults=true;r.maxAlternatives=1;let buf='';
+      r.onresult=ev=>{let t='';for(let i=0;i<ev.results.length;i++)t+=ev.results[i][0].transcript+' ';buf=t.trim();cb.partial&&cb.partial(buf)};
+      r.onerror=ev=>fin(buf,(ev&&ev.error)||'upstream_error');
+      r.onend=()=>fin(buf,'ended');
+      r.start();
+      return {stop:()=>{try{r.stop()}catch(e){}}};
+    }catch(e){fin('','unavailable')}
+  }
+  fin('','unavailable');
+  return {stop(){}};
+}
+const MIC_FATAL=['not_granted','unavailable','not-allowed','service-not-allowed','upstream_error','rate_limited','audio-capture','dismissed'];
+/* bouton micro réutilisable : accumule une transcription ; onText(texte) à chaque mise à jour */
+function micWidget(c,onText){
+  let rec=null,busy=false,base='',cur='';
+  const out=h('div',{class:'heard'},'');
+  const btn=h('button',{class:'mic'},'🎤 Parler');
+  const msg=h('div',{class:'sub'},'');
+  function setBusy(b){busy=b;btn.classList.toggle('on',b);btn.textContent=b?'🎙️ J\'écoute… touche pour finir':'🎤 Parler'}
+  btn.addEventListener('click',()=>{
+    if(busy){if(rec)rec.stop();return}
+    stopSpeak();msg.textContent='';setBusy(true);
+    rec=recognizeStart(c,{
+      partial:t=>{cur=t;out.textContent='« '+(base?base+' ':'')+t+' »'},
+      end:(text,reason)=>{
+        setBusy(false);
+        if(text){base=(base?base+' ':'')+text;cur='';out.textContent='« '+base+' »';onText(base)}
+        else if(MIC_FATAL.includes(reason)){msg.textContent='Le micro n\'est pas disponible ici ('+reason+'). Parle à voix haute et note-toi toi-même.';btn.disabled=true;onText(base,true)}
+        else msg.textContent='Je n\'ai rien entendu. Réessaie.';
+      }});
+  });
+  return {el:h('div',{class:'micbox'},btn,out,msg),text:()=>base,reset:()=>{base='';out.textContent=''}};
+}
+async function askClaude(prompt,box){
+  if(!capSample){box.textContent='La correction par Claude n\'est pas disponible dans cet affichage.';return null}
+  box.textContent='Claude corrige… (environ 30 secondes)';
+  try{return await capSample.json(prompt,{modelTier:'default',cache:false})}
+  catch(e){
+    const c=e&&e.code;
+    box.textContent=c==='not_granted'?'Autorisation refusée : tu peux t\'auto-évaluer avec la grille.':(c==='rate_limited'?'Trop de demandes pour le moment, réessaie plus tard.':'Correction impossible pour le moment ('+(c||'erreur')+').');
+    return null;
+  }
+}
+const asList=x=>Array.isArray(x)?x:[];
+function renderFeedback(box,r){
+  box.replaceChildren(h('div',{class:'fb'},
+    h('b',{},'Correction de Claude'+(r.note_sur_20!=null?' · '+r.note_sur_20+' / 20':'')),
+    asList(r.points_forts).length?h('div',{},h('b',{},'Points forts'),h('ul',{},asList(r.points_forts).map(x=>h('li',{},String(x))))):null,
+    asList(r.erreurs).length?h('div',{},h('b',{},'À corriger'),asList(r.erreurs).map(e=>h('div',{class:'err'},h('span',{class:'bad'},String(e.extrait||'')),' → ',h('b',{},String(e.correction||'')),h('div',{class:'sub'},String(e.explication||''))))):null,
+    r.version_amelioree?h('div',{},h('b',{},'Version améliorée'),h('p',{class:'model'},String(r.version_amelioree))):null,
+    asList(r.conseils).length?h('div',{},h('b',{},'Conseils'),h('ul',{},asList(r.conseils).map(x=>h('li',{},String(x))))):null));
+}
+
+/* ---------- parcours adaptatif ---------- */
+const allItems=ci=>COURSES[ci].units.flatMap(u=>u.i);
+const dueItems=ci=>allItems(ci).filter(x=>store.srs[x.id]&&store.srs[x.id].d<=today()).sort((a,b)=>store.srs[a.id].b-store.srs[b.id].b);
+const unitItems=(ci,ui)=>COURSES[ci].units[ui].i;
+const mastery=(ci,ui)=>{const it=unitItems(ci,ui);return Math.round(100*it.filter(x=>store.srs[x.id]&&store.srs[x.id].b>=3).length/it.length)};
+const started=(ci,ui)=>unitItems(ci,ui).some(x=>store.srs[x.id]);
+const diffOf=id=>{const s=store.stats[id];return s?(s.ko+.5)/(s.ok+s.ko+1):0};
+const weakList=ci=>allItems(ci).filter(x=>{
+  const s=store.stats[x.id];if(!s||s.ko<1)return false;
+  const b=store.srs[x.id]?store.srs[x.id].b:0;
+  return b<=2&&(s.ko>=2||s.ko>=s.ok*.5);
+}).sort((a,b)=>diffOf(b.id)-diffOf(a.id));
+function levelLabel(ci,ui){const c=COURSES[ci];let l='';(c.levels||[]).forEach(x=>{if(x[0]<=ui)l=x[1]});return l}
+function nextStep(ci){
+  const c=COURSES[ci],w=weakList(ci).length,due=dueItems(ci).length;
+  const re=c.units.findIndex((u,ui)=>store.reinforce[ci+':'+ui]);
+  if(w>=4)return{t:'Rattrapage : '+w+' mots difficiles',s:'Reprendre exactement là où tu as eu du mal',f:()=>startLesson('weak')};
+  if(re>=0)return{t:'À renforcer : '+c.units[re].t,s:'Dernier score '+store.reinforce[ci+':'+re]+' %',f:()=>vocabScreen(re,true)};
+  if(due>=5)return{t:'Révision du jour',s:due+' mots à revoir',f:()=>startLesson('review')};
+  const lv=store.lvl[ci]||0;
+  let ui=c.units.findIndex((u,i)=>i>=lv&&store.done[ci+':'+i]==null);
+  if(ui<0)ui=c.units.findIndex((u,i)=>store.done[ci+':'+i]==null);
+  if(ui>=0)return{t:'Continuer : '+c.units[ui].t,s:'Unité '+(ui+1)+' sur '+c.units.length,f:()=>vocabScreen(ui,true)};
+  return{t:'Parcours terminé',s:'Continue avec les révisions et les points faibles',f:()=>startLesson(due?'review':'weak')};
+}
+
+/* ---------- profils ---------- */
+function profilesScreen(){
+  stopSpeak();
+  const ids=Object.keys(DB.profiles);
+  const inp=h('input',{type:'text',class:'txt',placeholder:'Prénom',autocomplete:'off',maxlength:'20'});
+  const create=()=>{const n=inp.value.trim();if(!n)return;const id=newProfile(n);useProfile(id);homeScreen()};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')create()});
+  app.replaceChildren(
+    h('header',{class:'top'},h('h1',{},ids.length?'Qui apprend ?':'Bienvenue'),
+      h('p',{class:'sub'},ids.length?'Chaque profil a son niveau, sa progression et ses mots difficiles.':'Crée ton profil. Tu pourras en ajouter un autre pour une deuxième personne.')),
+    h('div',{class:'units'},
+      ids.map(id=>{const p=DB.profiles[id],n=Object.keys(p.done).length;
+        return h('div',{class:'card dcard'},h('div',{class:'ct'},h('b',{},p.name),h('span',{},COURSES[p.course].name+' · '+n+' unité'+(n>1?'s':'')+' terminée'+(n>1?'s':''))),
+          h('button',{class:'btn',onclick:()=>{useProfile(id);homeScreen()}},'Choisir'))}),
+      h('h3',{class:'lvl'},ids.length?'Nouveau profil':'Ton prénom'),
+      inp,
+      h('button',{class:'btn wide',onclick:create},'➕ Créer ce profil'),
+      store&&DB.cur&&DB.profiles[DB.cur]?h('button',{class:'link',onclick:homeScreen},'Retour'):null)
+  );
+  window.scrollTo(0,0);
+}
+function boot(){
+  const ids=Object.keys(DB.profiles);
+  if(!ids.length){profilesScreen();return}
+  if(ids.length===1){useProfile(ids[0]);homeScreen();return}
+  profilesScreen();
+}
+
+/* ---------- test de niveau ---------- */
+function placementScreen(){
+  const ci=store.course,c=COURSES[ci],n=c.units.length;
+  const steps=Math.min(12,n),qs=[];
+  for(let k=0;k<steps;k++){
+    const ui=steps>1?Math.round(k*(n-1)/(steps-1)):0;
+    const u=c.units[ui];
+    qs.push({ui,u,it:u.i[Math.floor(Math.random()*u.i.length)],tf:Math.random()<.5});
+  }
+  const res=[];let i=0;
+  function finish(){
+    let lastOk=-1;res.forEach((r,k)=>{if(r.ok)lastOk=qs[k].ui});
+    const bad=res.filter(r=>!r.ok).length;
+    const level=(res.length===qs.length&&bad<=1)?n-1:(lastOk<0?0:Math.min(n-1,lastOk+1));
+    store.lvl[ci]=level;save();
+    app.replaceChildren(
+      h('div',{class:'stage res'},h('h2',{},'Test terminé'),
+        h('p',{class:'sub'},'Ton niveau de départ'),
+        h('div',{class:'big small'},'Unité '+(level+1)),
+        h('p',{class:'sub'},c.units[level].t+(levelLabel(ci,level)?' · '+levelLabel(ci,level):'')),
+        h('p',{class:'note'},level>0?'Les unités précédentes sont marquées comme acquises. Elles restent disponibles, et les mots que tu rates en route reviendront automatiquement.':'Tu commences au début : l\'appli adaptera ensuite le rythme à tes réponses.')),
+      h('div',{class:'foot'},h('button',{class:'btn wide',onclick:homeScreen},'Commencer'))
+    );
+  }
+  function show(){
+    if(i>=qs.length){finish();return}
+    const q=qs[i],it=q.it,tf=q.tf;
+    const ans=tf?it.f:it.t;
+    const others=[...new Set(q.u.i.filter(x=>x!==it).map(x=>tf?x.f:x.t).filter(x=>x!==ans))];
+    const opts=shuffle([ans,...shuffle(others).slice(0,3)]);
+    let locked=false;
+    const wrap=h('div',{class:'opts'});
+    const answer=(ok,btn)=>{
+      if(locked)return;locked=true;
+      [...wrap.children].forEach(b=>{b.disabled=true;if(b.textContent===ans)b.classList.add('good')});
+      if(!ok&&btn)btn.classList.add('wrong');
+      res.push({ok});
+      const stop=res.length>=2&&!res[res.length-1].ok&&!res[res.length-2].ok;
+      setTimeout(()=>{if(stop)finish();else{i++;show()}},650);
+    };
+    opts.forEach(o=>{const b=h('button',{class:'opt'},o);b.addEventListener('click',()=>answer(o===ans,b));wrap.append(b)});
+    const idk=h('button',{class:'link',onclick:()=>answer(false,null)},'Je ne sais pas');
+    app.replaceChildren(
+      h('div',{class:'bar'},h('button',{class:'x','aria-label':'Quitter',onclick:homeScreen},'×'),h('div',{class:'prog'},h('i',{style:'width:'+Math.round(i/qs.length*100)+'%'}))),
+      h('div',{class:'stage'},
+        h('p',{class:'ask'},'Test de niveau · '+c.name+' · '+(tf?'traduis en français':'traduis en '+c.name.toLowerCase())),
+        h('div',{class:'prompt'},tf?it.t:it.f),
+        wrap,idk)
+    );
+  }
+  app.replaceChildren(
+    bar(homeScreen,'Test de niveau'),
+    h('div',{class:'stage'},
+      h('h2',{},'Trouvons ton niveau'),
+      h('p',{class:'note'},'Une douzaine de questions de plus en plus difficiles, sans pression. Réponds « Je ne sais pas » quand tu hésites : le test s\'arrête dès que ça devient trop dur et te place au bon endroit.'),
+      h('button',{class:'btn wide',onclick:show},'Commencer le test'))
+  );
+}
+
+/* ---------- accueil ---------- */
+let resetArmed=false;
+function homeScreen(){
+  stopSpeak();S=null;
+  const ci=store.course,c=COURSES[ci];
+  const dueN=dueItems(ci).length,weakN=weakList(ci).length;
+  const dn=c.units.filter((u,ui)=>store.done[ci+':'+ui]!=null).length;
+  const lv=store.lvl[ci];
+  const needTest=lv===undefined&&dn===0;
+  const ns=nextStep(ci);
+  const list=[];
+  c.units.forEach((u,ui)=>{
+    const l=(c.levels||[]).find(x=>x[0]===ui);
+    if(l)list.push(h('h3',{class:'lvl'},l[1]));
+    const k=ci+':'+ui,d=store.done[k],placed=d==null&&lv!==undefined&&ui<lv,rf=store.reinforce[k],m=started(ci,ui)?mastery(ci,ui):null;
+    list.push(h('div',{class:'card'},
+      h('div',{class:'num'},d!=null?'✓':placed?'★':String(ui+1)),
+      h('div',{class:'ct'},h('b',{},u.t),
+        h('span',{},u.i.length+' mots et phrases'+(rf?' · ⚠ à renforcer':d!=null?' · meilleur score '+d+' %':placed?' · acquis au test de niveau':'')),
+        m!==null?h('div',{class:'mbar','aria-label':'Maîtrise'},h('i',{style:'width:'+m+'%'})):null,
+        m!==null?h('span',{class:'mtxt'},'Maîtrise '+m+' %'):null),
+      h('div',{class:'acts'},
+        h('button',{class:'btn ghost',onclick:()=>vocabScreen(ui,false)},'Vocabulaire'),
+        audioPossible()?h('button',{class:'btn ghost',onclick:()=>listenScreen(ui)},'🎧 Écouter'):null,
+        h('button',{class:'btn',onclick:()=>vocabScreen(ui,true)},d!=null?'Refaire':'Commencer'))));
+  });
+  app.replaceChildren(
+    h('header',{class:'top'},
+      h('div',{class:'toprow'},h('h1',{},'Parlo'),
+        h('div',{class:'trow'},h('button',{class:'chip2',onclick:profilesScreen},'👤 '+store.name),h('button',{class:'x','aria-label':'Réglages',onclick:settingsScreen},'⚙'))),
+      h('p',{class:'sub'},dn+' / '+c.units.length+' unités terminées')),
+    h('div',{class:'tabs'},Object.keys(COURSES).map(k=>h('button',{class:'tab'+(k===ci?' on':''),onclick:()=>{store.course=k;save();homeScreen()}},COURSES[k].name))),
+    needTest?h('div',{class:'nextcard'},h('b',{},'Commence au bon niveau'),h('span',{class:'sub'},'Un test de 3 minutes te place là où tu en es vraiment.'),h('button',{class:'btn wide',onclick:placementScreen},'Faire le test de niveau')):
+      h('div',{class:'nextcard'},h('span',{class:'sub'},'Prochaine étape'),h('b',{},ns.t),h('span',{class:'sub'},ns.s),h('button',{class:'btn wide',onclick:ns.f},'Y aller')),
+    store.goal>0?goalCard():null,
+    ci==='it'?h('button',{class:'btn wide bac',onclick:bacScreen},'🎓 Bac blanc d\'italien · oral et écrit'):null,
+    weakN?h('button',{class:'btn wide ghost',onclick:()=>startLesson('weak')},'🎯 Mes points faibles ('+weakN+' mot'+(weakN>1?'s':'')+')'):null,
+    dueN?h('button',{class:'btn wide ghost',onclick:()=>startLesson('review')},'Révision du jour ('+dueN+' mot'+(dueN>1?'s':'')+')'):null,
+    h('button',{class:'btn wide ghost',onclick:suiviScreen},'📈 Mon suivi'),
+    h('div',{class:'oral'},
+      h('button',{class:'btn ghost',onclick:pronScreen},'🗣️ Prononciation'),
+      h('button',{class:'btn ghost',onclick:dialogListScreen},'💬 Dialogues ('+(DIALOGS[ci]||[]).length+')')),
+    h('div',{class:'units'},list),
+    h('div',{class:'foot-note'},
+      h('span',{},'Profil « '+store.name+' » : progression enregistrée sur cet appareil. Pense à l\'exporter dans ⚙.'),
+      !needTest?h('button',{class:'link',onclick:placementScreen},'Refaire le test de niveau'):null,
+      h('button',{class:'link',onclick:e=>{
+        if(!resetArmed){resetArmed=true;e.target.textContent='Appuie encore pour effacer ce profil';setTimeout(()=>{resetArmed=false;if(e.target.isConnected)e.target.textContent='Effacer la progression de ce profil'},4000)}
+        else{resetArmed=false;store.done={};store.srs={};store.stats={};store.lvl={};store.reinforce={};store.log={};store.learned={};store.bac={hist:[],seen:{}};save();homeScreen()}
+      }},'Effacer la progression de ce profil'))
+  );
+  window.scrollTo(0,0);
+}
+
+/* ---------- objectif et suivi ---------- */
+function goalCard(){
+  const m=minsToday(),g=store.goal,ok=m>=g;
+  return h('div',{class:'goal'+(ok?' done':'')},
+    h('span',{class:'sub'},ok?'Objectif du jour atteint ✓':'Objectif du jour'),
+    h('b',{},Math.min(m,999)+' / '+g+' min'),
+    h('div',{class:'mbar'},h('i',{style:'width:'+Math.min(100,Math.round(100*m/g))+'%'})));
+}
+function suiviScreen(){
+  const ci=store.course,c=COURSES[ci],t=today();
+  const DAYS=['D','L','M','M','J','V','S'];
+  const week=[];for(let k=6;k>=0;k--){const d=t-k,L=store.log[d]||{s:0,n:0,ok:0};week.push({d,s:L.s,m:Math.round(L.s/60),n:L.n,ok:L.ok,wd:DAYS[new Date(d*864e5).getUTCDay()]})}
+  const maxM=Math.max(5,...week.map(x=>x.m));
+  const actDays=week.filter(x=>x.s>0||x.m>0||x.n>0).length;
+  const totM=week.reduce((a,x)=>a+x.m,0),totN=week.reduce((a,x)=>a+x.n,0),totOk=week.reduce((a,x)=>a+x.ok,0);
+  const acc=totN?Math.round(100*totOk/totN):null;
+  // mots acquis par semaine (6 dernières)
+  const wk=[0,0,0,0,0,0];let totalLearned=0;
+  for(const id in store.learned){if(id.indexOf(ci+'|')!==0)continue;totalLearned++;const a=Math.floor((t-store.learned[id])/7);if(a>=0&&a<6)wk[a]++}
+  const maxW=Math.max(1,...wk);
+  const all=allItems(ci),acq=all.filter(x=>store.srs[x.id]&&store.srs[x.id].b>=3).length;
+  // points faibles récurrents
+  const byId={};all.forEach(x=>byId[x.id]=x);
+  const rec=Object.keys(store.stats).filter(id=>byId[id]&&(store.stats[id].miss||0)>=2).sort((a,b)=>(store.stats[b].miss||0)-(store.stats[a].miss||0)).slice(0,8);
+  const bh=store.bac.hist.slice(-8);
+  const dayMin=store.log[t]?Math.round(store.log[t].s/60):0;
+  app.replaceChildren(
+    bar(homeScreen,'Mon suivi · '+store.name),
+    h('div',{class:'stage scroll'},
+      store.goal>0?goalCard():h('div',{class:'goal'},h('span',{class:'sub'},'Aujourd\'hui'),h('b',{},dayMin+' min')),
+      h('div',{class:'set'},h('b',{},'7 derniers jours (minutes)'),
+        h('div',{class:'chart'},week.map(x=>h('div',{class:'col'+(x.m?'':' off')},h('span',{},x.m?String(x.m):''),h('i',{style:'height:'+Math.round(100*x.m/maxM*0.7)+'%'}),h('span',{},x.wd))))),
+      h('div',{class:'stat3'},
+        h('div',{},h('b',{},actDays+' / 7'),h('span',{},'jours actifs')),
+        h('div',{},h('b',{},String(totM)),h('span',{},'minutes')),
+        h('div',{},h('b',{},acc===null?'–':acc+' %'),h('span',{},'bonnes réponses'))),
+      h('div',{class:'set'},h('b',{},'Mots acquis ('+c.name.toLowerCase()+')'),
+        h('span',{class:'sub'},acq+' mots solides sur '+all.length+' · '+Math.round(100*acq/all.length)+' % du cours'),
+        h('div',{class:'mbar'},h('i',{style:'width:'+Math.round(100*acq/all.length)+'%'})),
+        h('span',{class:'sub'},'Nouveaux mots acquis par semaine :'),
+        wk.map((n,i)=>h('div',{class:'hrow'},h('span',{style:'width:92px'},i===0?'Cette semaine':i===1?'Semaine passée':'Il y a '+i+' sem.'),h('div',{class:'mbar'},h('i',{style:'width:'+Math.round(100*n/maxW)+'%'})),h('b',{},String(n)))),
+        totalLearned===0?h('span',{class:'sub'},'Les mots comptent comme acquis quand tu les réussis plusieurs fois de suite.'):null),
+      h('div',{class:'set'},h('b',{},'Points faibles qui reviennent'),
+        rec.length?rec.map(id=>{const it=byId[id];return h('div',{class:'vrow'},h('div',{},h('b',{},it.t),h('span',{},it.f+' · raté '+store.stats[id].miss+' fois')),speakBtn(it.t,c))}):h('span',{class:'sub'},'Rien de récurrent pour l\'instant : continue comme ça.'),
+        rec.length?h('button',{class:'btn ghost',onclick:()=>startLesson('weak')},'🎯 Travailler mes points faibles'):null),
+      ci==='it'&&bh.length?h('div',{class:'set'},h('b',{},'Bac blanc : estimations'),
+        h('div',{class:'chart'},bh.map(x=>h('div',{class:'col'},h('span',{},String(x.score)),h('i',{style:'height:'+Math.round(100*x.score/20*0.7)+'%'}),h('span',{},({written:'É',oral:'O',co:'CO',ce:'CE',ee:'EE',eo:'EO'})[x.kind]||'')))),
+        h('span',{class:'sub'},'Notes estimées sur 20 (É = écrit complet, O = oral complet).')):null)
+  );
+}
+
+/* ---------- réglages ---------- */
+function settingsScreen(){
+  const c=CC();
+  const opt=(v,l,sel)=>{const o=h('option',{value:v},l);if(sel)o.selected=true;return o};
+  const voices=[];try{if(canSpeak)speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().startsWith(c.code)).forEach(v=>voices.push(v))}catch(e){}
+  const rateLbl=h('b',{},'×'+store.set.rate.toFixed(2));
+  const testOut=h('div',{class:'sub'},'');
+  const sample={en:'Hello, how are you today?',es:'Hola, ¿cómo estás hoy?',it:'Ciao, come stai oggi?'}[c.code];
+  app.replaceChildren(
+    bar(()=>{save();homeScreen()},'Réglages'),
+    h('div',{class:'stage scroll'},
+      h('div',{class:'set'},h('b',{},'État de l\'audio'),
+        h('span',{class:'sub'},'Voix Claude : '+(capTts&&!ttsOff?'disponible':'indisponible ici')),
+        h('span',{class:'sub'},'Voix du navigateur : '+(canSpeak?(voices.length?voices.length+' voix pour '+c.name.toLowerCase():'aucune voix détectée pour cette langue'):'indisponible')),
+        h('span',{class:'sub'},'Reconnaissance vocale : '+(capDict?'disponible (dictée Claude)':SR?'disponible (navigateur)':'indisponible ici, tu t\'évalues toi-même'))),
+      capTts?h('label',{class:'set'},h('b',{},'Moteur de voix'),h('select',{onchange:e=>{store.set.eng=e.target.value;save()}},opt('auto','Automatique (voix Claude)',store.set.eng==='auto'),opt('browser','Voix du navigateur',store.set.eng==='browser'))):null,
+      capTts?h('label',{class:'set'},h('b',{},'Timbre de la voix Claude'),h('select',{onchange:e=>{store.set.voice=e.target.value;save()}},['buttery','airy','glassy','rounded'].map(v=>opt(v,v,store.set.voice===v)))):null,
+      voices.length?h('label',{class:'set'},h('b',{},'Voix du navigateur ('+c.name.toLowerCase()+')'),h('select',{onchange:e=>{store.set.bv[c.code]=e.target.value;save()}},opt('','Automatique',!store.set.bv[c.code]),voices.map(v=>opt(v.voiceURI,v.name+' · '+v.lang,store.set.bv[c.code]===v.voiceURI)))):null,
+      h('label',{class:'set'},h('b',{},'Vitesse de la voix '),rateLbl,h('input',{type:'range',min:'.7',max:'1.3',step:'.05',value:String(store.set.rate),oninput:e=>{store.set.rate=parseFloat(e.target.value);rateLbl.textContent='×'+store.set.rate.toFixed(2);save()}})),
+      h('label',{class:'set'},h('b',{},'Objectif quotidien'),h('select',{onchange:e=>{store.goal=parseInt(e.target.value,10);save()}},[[0,'Aucun'],[5,'5 minutes par jour'],[10,'10 minutes par jour'],[15,'15 minutes par jour'],[20,'20 minutes par jour'],[30,'30 minutes par jour']].map(([v,l])=>opt(String(v),l,store.goal===v)))),
+      c.code==='en'?h('label',{class:'set row2'},h('input',{type:'checkbox',onchange:e=>{store.set.uk=e.target.checked;save()}}),h('span',{},'Accent britannique (au lieu d\'américain)')):null,
+      h('label',{class:'set row2'},h('input',{type:'checkbox',onchange:e=>{store.set.force=e.target.checked;save()}}),h('span',{},'Activer les exercices d\'écoute même si l\'audio n\'est pas détecté')),
+      h('div',{class:'set'},
+        h('button',{class:'btn ghost',onclick:async()=>{testOut.textContent='Lecture…';const ok=await speakAsync(sample,c);testOut.textContent=ok?'Lecture terminée. Si tu n\'as rien entendu : monte le volume et désactive le mode silencieux.':audioHelp()}},'🔊 Tester la voix'),
+        h('button',{class:'btn ghost',onclick:e=>{
+          testOut.textContent='';
+          const w=micWidget(c,t=>{});testOut.replaceChildren(w.el);
+        }},'🎤 Tester le micro'),testOut))
+  );
+  app.querySelector('.stage').append(backupSection());
+  // restaurer l'état des cases
+  const cbs=app.querySelectorAll('input[type=checkbox]');
+  cbs.forEach((cb,i)=>{const isUk=c.code==='en'&&i===0;cb.checked=isUk?store.set.uk:store.set.force});
+}
+
+
+function backupSection(){
+  const out=h('textarea',{class:'ta',rows:'4',readonly:'',placeholder:'Le code de sauvegarde apparaîtra ici'});
+  const inp=h('textarea',{class:'ta',rows:'3',placeholder:'Colle ici un code de sauvegarde'});
+  const msg=h('div',{class:'sub'},'');
+  let delArmed=false;
+  const enc=()=>'APPR1:'+btoa(unescape(encodeURIComponent(JSON.stringify(DB))));
+  return h('div',{class:'set'},
+    h('b',{},'Profils et sauvegarde'),
+    h('span',{class:'sub'},'Profil actuel : '+store.name),
+    h('button',{class:'btn ghost',onclick:profilesScreen},'👤 Changer ou créer un profil'),
+    h('button',{class:'btn ghost',onclick:()=>{
+      out.value=enc();msg.textContent='Garde ce code (note, message à toi-même) : il contient tous les profils et leur progression.';
+      try{out.focus();out.select()}catch(e){}
+      try{navigator.clipboard.writeText(out.value).then(()=>{msg.textContent='Code copié. Colle-le dans une note pour le conserver.'}).catch(()=>{})}catch(e){}
+    }},'💾 Exporter la progression'),
+    out,inp,
+    h('button',{class:'btn ghost',onclick:()=>{
+      try{
+        const t=inp.value.trim();
+        if(!t.startsWith('APPR1:'))throw new Error('format');
+        const d=JSON.parse(decodeURIComponent(escape(atob(t.slice(6)))));
+        if(!d||!d.profiles)throw new Error('format');
+        let n=0;for(const id in d.profiles){DB.profiles[id]=normalize(d.profiles[id]);n++}
+        if(DB.cur&&DB.profiles[DB.cur])store=DB.profiles[DB.cur];
+        save();msg.textContent=n+' profil'+(n>1?'s':'')+' importé'+(n>1?'s':'')+'.';
+        setTimeout(profilesScreen,900);
+      }catch(e){msg.textContent='Code invalide : copie-le en entier, depuis « APPR1: ».'}
+    }},'📥 Importer un code'),
+    msg,
+    h('button',{class:'link',onclick:e=>{
+      if(!delArmed){delArmed=true;e.target.textContent='Appuie encore pour supprimer le profil « '+store.name+' »';setTimeout(()=>{delArmed=false;if(e.target.isConnected)e.target.textContent='Supprimer ce profil'},4000);return}
+      delete DB.profiles[DB.cur];DB.cur=null;store=null;save();
+      const ids=Object.keys(DB.profiles);
+      if(ids.length===1){useProfile(ids[0]);homeScreen()}else profilesScreen();
+    }},'Supprimer ce profil'));
+}
+
+/* ---------- vocabulaire (avant la leçon) ---------- */
+function vocabScreen(ui,start){
+  const u=COURSES[store.course].units[ui];
+  app.replaceChildren(
+    bar(homeScreen),
+    h('div',{class:'stage scroll'},
+      h('h2',{},u.t),
+      h('p',{class:'note'},u.n),
+      h('div',{class:'vocab'},u.i.map(it=>h('div',{class:'vrow'},h('div',{},h('b',{},it.t),h('span',{},it.f)),speakBtn(it.t))))),
+    h('div',{class:'foot'},h('button',{class:'btn wide',onclick:start?()=>startLesson('lesson',ui):homeScreen},start?'Commencer la leçon':'Retour'))
+  );
+  window.scrollTo(0,0);
+}
+
+/* ---------- écoute continue ---------- */
+function listenScreen(ui){
+  const c=CC(),u=c.units[ui],items=u.i;
+  const o={pause:true,fr:true,loop:false,hide:false};
+  let run=0,idx=0,playing=false,fails=0;
+  const rows=items.map((it,i)=>h('div',{class:'vrow lrow',onclick:()=>{idx=i;mark();if(playing)start()}},h('div',{},h('b',{class:'tt'},it.t),h('span',{class:'ff'},it.f))));
+  const status=h('div',{class:'sub center'},'Écoute, répète à voix haute pendant la pause, puis la traduction est lue.');
+  const playBtn=h('button',{class:'btn',onclick:()=>playing?pause():start()},'▶ Lecture');
+  function mark(){rows.forEach((r,i)=>r.classList.toggle('hl',i===idx));const r=rows[idx];if(r&&r.scrollIntoView)try{r.scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}}
+  function pause(){run++;playing=false;stopSpeak();playBtn.textContent='▶ Lecture';status.textContent='En pause.'}
+  async function start(){
+    const my=++run;playing=true;playBtn.textContent='⏸ Pause';fails=0;
+    while(playing&&my===run){
+      const it=items[idx];mark();status.textContent='Écoute…';
+      const ok=await speakAsync(it.t,c);
+      if(my!==run)return;
+      if(!ok){fails++;if(fails>=3){playing=false;playBtn.textContent='▶ Lecture';status.textContent='Audio indisponible ici. Vérifie les réglages (⚙).';return}}else fails=0;
+      if(o.pause){status.textContent='À toi : répète à voix haute…';await sleep(Math.max(1500,it.t.length*100));if(my!==run)return}
+      if(o.fr){status.textContent='Traduction…';await speakAsync(it.f,FR);if(my!==run)return}
+      await sleep(350);if(my!==run)return;
+      idx++;if(idx>=items.length){if(o.loop)idx=0;else{idx=0;playing=false;playBtn.textContent='▶ Lecture';status.textContent='Terminé. Recommence quand tu veux.';mark();return}}
+    }
+  }
+  const tog=(label,k,cb)=>h('label',{class:'tg'},h('input',{type:'checkbox',...(o[k]?{checked:''}:{}),onchange:e=>{o[k]=e.target.checked;if(cb)cb()}}),h('span',{},label));
+  const list=h('div',{class:'vocab'},rows);
+  app.replaceChildren(
+    bar(()=>{run++;stopSpeak();homeScreen()},'Écoute · '+u.t),
+    h('div',{class:'stage scroll'},
+      status,
+      h('div',{class:'row'},
+        h('button',{class:'btn ghost',onclick:()=>{idx=Math.max(0,idx-1);mark();if(playing)start()}},'⏮'),
+        playBtn,
+        h('button',{class:'btn ghost',onclick:()=>{idx=Math.min(items.length-1,idx+1);mark();if(playing)start()}},'⏭')),
+      h('div',{class:'togs'},
+        tog('Pause pour répéter','pause'),tog('Lire la traduction','fr'),tog('Boucle','loop'),
+        tog('Masquer le texte','hide',()=>list.classList.toggle('mask',o.hide))),
+      list)
+  );
+  mark();
+}
+
+/* ---------- dialogues ---------- */
+function dialogListScreen(){
+  const ci=store.course,ds=DIALOGS[ci]||[];
+  app.replaceChildren(
+    bar(homeScreen,'Dialogues · '+CC().name),
+    h('div',{class:'stage scroll'},
+      h('p',{class:'sub'},'Écoute des conversations, puis joue un rôle : l\'appli dit l\'autre réplique, tu réponds à voix haute.'),
+      ds.map((d,i)=>h('div',{class:'card dcard'},h('div',{class:'ct'},h('b',{},d.t),h('span',{},d.sc+' · '+d.l.length+' répliques')),h('button',{class:'btn',onclick:()=>dialogScreen(i)},'Ouvrir'))))
+  );
+}
+function dialogScreen(di){
+  const c=CC(),d=DIALOGS[c.code][di];
+  const st={mode:'idle',pos:-1,fr:true,hide:false,wait:false};
+  let run=0,resolveNext=null;
+  const voiceOf=s=>s==='A'?{voice:'buttery',pitch:1}:{voice:'airy',pitch:1.25};
+  const lines=h('div',{class:'dlg'});
+  const panel=h('div',{class:'dpanel'});
+  function drawLines(){
+    lines.replaceChildren(...d.l.map((ln,i)=>{
+      const mine=st.mode==='A'||st.mode==='B'?ln.s===st.mode:false;
+      const hidden=mine&&st.hide&&!(i<st.pos);
+      return h('div',{class:'bub '+ln.s+(i===st.pos?' hl':'')},
+        h('span',{class:'who'},ln.s),
+        h('div',{},h('b',{class:'tt'},hidden?'••• (à toi de la dire)':ln.t),st.fr?h('span',{class:'ff'},ln.f):null),
+        speakBtn(ln.t,c));
+    }));
+  }
+  function stop(){run++;stopSpeak();st.mode='idle';st.wait=false;if(resolveNext){resolveNext();resolveNext=null}}
+  async function listenAll(){
+    stop();const my=++run;st.mode='listen';
+    for(let i=0;i<d.l.length&&my===run;i++){st.pos=i;drawLines();drawPanel();await speakAsync(d.l[i].t,c,voiceOf(d.l[i].s));if(my!==run)return;await sleep(350)}
+    if(my===run){st.mode='idle';st.pos=-1;drawLines();drawPanel()}
+  }
+  async function role(r){
+    stop();const my=++run;st.mode=r;
+    for(let i=0;i<d.l.length&&my===run;i++){
+      st.pos=i;st.wait=false;drawLines();
+      if(d.l[i].s!==r){drawPanel('Je dis : '+d.l[i].f);await speakAsync(d.l[i].t,c,voiceOf(d.l[i].s));if(my!==run)return;await sleep(300)}
+      else{st.wait=true;drawPanel();await new Promise(res=>{resolveNext=res});resolveNext=null;if(my!==run)return}
+    }
+    if(my===run){st.mode='done';st.pos=d.l.length;st.wait=false;drawLines();drawPanel()}
+  }
+  function drawPanel(info){
+    panel.replaceChildren();
+    if(st.mode==='idle'||st.mode==='done'){
+      panel.append(h('div',{class:'row wrap'},
+        h('button',{class:'btn',onclick:listenAll},'▶ Écouter le dialogue'),
+        h('button',{class:'btn ghost',onclick:()=>role('A')},'Jouer le rôle A'),
+        h('button',{class:'btn ghost',onclick:()=>role('B')},'Jouer le rôle B')),
+        st.mode==='done'?h('p',{class:'sub center'},'Dialogue terminé. Refais-le sans le texte pour t\'entraîner de mémoire.'):null);
+      return;
+    }
+    if(st.mode==='listen'){panel.append(h('button',{class:'btn ghost wide',onclick:()=>{stop();drawPanel();drawLines()}},'■ Arrêter'));return}
+    if(st.wait){
+      const ln=d.l[st.pos];
+      const w=micAvailable()?micWidget(c,(t)=>{const s=similarity(t,ln.t);sc.textContent=t?'Proximité avec la réplique : '+Math.round(s*100)+' %':''}):null;
+      const sc=h('div',{class:'sub center'},'');
+      panel.append(h('b',{},'À toi de dire cette réplique'),h('p',{class:'sub'},ln.f),w?w.el:h('p',{class:'sub'},'Dis-la à voix haute.'),sc,
+        h('div',{class:'row wrap'},h('button',{class:'btn',onclick:()=>{if(resolveNext){const r=resolveNext;resolveNext=null;r()}}},'Réplique suivante →'),h('button',{class:'btn ghost',onclick:stop},'■ Arrêter')));
+      return;
+    }
+    panel.append(h('p',{class:'sub center'},info||'L\'autre personne parle…'),h('button',{class:'btn ghost wide',onclick:()=>{stop();drawPanel();drawLines()}},'■ Arrêter'));
+  }
+  const tog=(label,k)=>h('label',{class:'tg'},h('input',{type:'checkbox',...(st[k]?{checked:''}:{}),onchange:e=>{st[k]=e.target.checked;drawLines()}}),h('span',{},label));
+  app.replaceChildren(
+    bar(()=>{stop();dialogListScreen()},d.t),
+    h('div',{class:'stage scroll'},h('p',{class:'sub'},d.sc),h('div',{class:'togs'},tog('Traduction','fr'),tog('Cacher mes répliques','hide')),lines,panel)
+  );
+  drawLines();drawPanel();
+}
+
+/* ---------- prononciation ---------- */
+function pronScreen(){
+  const c=CC(),g=PRON[c.code]||[];
+  app.replaceChildren(
+    bar(homeScreen,'Prononciation · '+c.name),
+    h('div',{class:'stage scroll'},
+      h('p',{class:'sub'},'Touche un mot pour l\'entendre, 🐢 pour l\'écouter lentement. Répète à voix haute.'),
+      g.map(s=>h('div',{class:'card pron'},h('b',{},s.t),h('p',{class:'sub'},s.n),
+        h('div',{class:'chips'},s.ex.map(w=>h('span',{class:'chip'},h('button',{onclick:()=>say(w,1,c)},w),audioPossible()?h('button',{class:'slow','aria-label':'Lent',onclick:()=>say(w,.7,c)},'🐢'):null))))))
+  );
+}
+
+/* ---------- moteur de leçon ---------- */
+function startLesson(mode,ui){
+  const ci=store.course,c=COURSES[ci];
+  let items,pool;
+  if(mode==='review'){items=shuffle(dueItems(ci).slice(0,10));pool=allItems(ci)}
+  else if(mode==='weak'){items=shuffle(weakList(ci).slice(0,10));pool=allItems(ci)}
+  else{
+    const base=c.units[ui].i;
+    const extra=weakList(ci).filter(x=>!base.includes(x)).slice(0,3);
+    items=base.concat(extra);pool=base.concat(extra);
+  }
+  if(!items.length){homeScreen();return}
+  if(pool.length<4)pool=allItems(ci);
+  const q=[];
+  shuffle(items).forEach(it=>q.push({type:'mc',item:it,dir:Math.random()<.5?'tf':'ft'}));
+  if(items.length>=5)q.push({type:'match',items:shuffle(items).slice(0,5)});
+  shuffle(items.filter(it=>it.t.split(/\s+/).length>=4)).slice(0,2).forEach(it=>q.push({type:'cloze',item:it}));
+  shuffle(items).forEach(it=>q.push({type:it.t.split(/\s+/).length>=3?'build':'type',item:it}));
+  items.filter(it=>(store.stats[it.id]||{ko:0}).ko>=2).slice(0,3).forEach(it=>q.push({type:'type',item:it}));
+  const aud=audioOK(c),sh=shuffle(items);
+  if(aud){
+    sh.slice(0,2).forEach(it=>q.push({type:'listen',item:it}));
+    sh.slice(2,4).forEach(it=>q.push({type:'listenfr',item:it}));
+    sh.slice(4,6).forEach(it=>q.push({type:'dictation',item:it}));
+  }
+  if(aud||micAvailable()){
+    const multi=shuffle(items.filter(it=>it.t.split(/\s+/).length>=2));
+    (multi.length>=3?multi:sh).slice(0,3).forEach(it=>q.push({type:'speak',item:it}));
+  }
+  S={mode,ui,course:c,items,pool,q,i:0,first:0,miss:0,initial:q.length,missed:new Map(),err:{}};
+  lessonScreen();
+}
+function lessonScreen(){
+  const ex=S.q[S.i];
+  if(!ex){resultScreen();return}
+  stopSpeak();
+  const bar_=h('div',{class:'bar'},
+    h('button',{class:'x','aria-label':'Quitter',onclick:homeScreen},'×'),
+    h('div',{class:'prog'},h('i',{style:'width:'+Math.round(S.i/S.q.length*100)+'%'})));
+  const stage=h('div',{class:'stage'}),foot=h('div',{class:'foot'});
+  app.replaceChildren(bar_,stage,foot);
+  EX[ex.type](ex,stage,foot);
+  window.scrollTo(0,0);
+}
+function nextBtn(){return h('button',{class:'btn wide',onclick:()=>{S.i++;lessonScreen()}},'Continuer')}
+function bump(it,ok){const s=store.stats[it.id]||(store.stats[it.id]={ok:0,ko:0});const L=dayLog();L.n++;if(ok){s.ok++;L.ok++}else{s.ko++;s.miss=(s.miss||0)+1}}
+function resolve(ex,ok,foot,extra){
+  const it=ex.item;
+  bump(it,ok);
+  if(ok){if(!ex.retry)S.first++}
+  else{
+    S.miss++;S.missed.set(it.id,it);
+    S.err[it.id]=(S.err[it.id]||0)+1;
+    const pos=Math.min(S.i+4,S.q.length),copy=Object.assign({},ex,{retry:true});
+    const n=S.err[it.id];
+    if(n<=4){if(n>=2&&n%2===0)S.q.splice(pos,0,{type:'teach',item:it},copy);else S.q.splice(pos,0,copy)}
+  }
+  save();
+  foot.className='foot '+(ok?'ok':'bad');
+  foot.replaceChildren(
+    h('div',{class:'msg'},h('b',{},ok?'Correct !':'Pas tout à fait'),h('span',{},it.t+'  =  '+it.f),extra?h('span',{class:'ex'},extra):null),
+    nextBtn());
+  say(it.t,1,S.course);
+}
+function skipListening(){
+  const keep=[],removed=[];
+  S.q.forEach((e,idx)=>{if(idx===S.i||(idx>S.i&&(e.type==='listen'||e.type==='listenfr'||e.type==='dictation')))removed.push(e);else keep.push(e)});
+  S.initial-=removed.filter(e=>!e.retry).length;
+  S.q=keep;
+  lessonScreen();
+}
+function skipCurrent(){
+  const ex=S.q[S.i];
+  if(!ex.retry)S.initial--;
+  S.q.splice(S.i,1);
+  lessonScreen();
+}
+function optsEl(opts,correct,ex,foot){
+  let locked=false;
+  const wrap=h('div',{class:'opts'});
+  opts.forEach(o=>{
+    const b=h('button',{class:'opt'},o);
+    b.addEventListener('click',()=>{
+      if(locked)return;locked=true;
+      const ok=o===correct;
+      b.classList.add(ok?'good':'wrong');
+      if(!ok){const r=[...wrap.children].find(x=>x.textContent===correct);if(r)r.classList.add('good')}
+      [...wrap.children].forEach(x=>x.disabled=true);
+      resolve(ex,ok,foot);
+    });
+    wrap.append(b);
+  });
+  return wrap;
+}
+function textExercise(ex,stage,foot,ask,promptEl,extraEl){
+  const it=ex.item,c=S.course;
+  let done=false;
+  const inp=h('input',{type:'text',class:'txt',autocomplete:'off',autocapitalize:'off',autocorrect:'off',spellcheck:'false',placeholder:'Ta réponse'});
+  const btn=h('button',{class:'btn wide',disabled:'',onclick:check},'Vérifier');
+  inp.addEventListener('input',()=>{btn.disabled=!inp.value.trim()});
+  inp.addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    if(done){const n=foot.querySelector('.btn');if(n)n.click()}else check();
+  });
+  function check(){
+    if(done||!inp.value.trim())return;
+    done=true;inp.readOnly=true;
+    const ok=accept(inp.value,it.t,c);
+    const exact=inp.value.trim().toLowerCase()===it.t.toLowerCase();
+    resolve(ex,ok,foot,ok&&!exact?'Orthographe exacte : '+it.t:null);
+  }
+  const chars=c.chars?h('div',{class:'chars'},c.chars.map(ch=>h('button',{onclick:()=>{if(done)return;inp.value+=ch;inp.dispatchEvent(new Event('input'));inp.focus()}},ch))):null;
+  stage.append(h('p',{class:'ask'},ask),promptEl,inp,chars,extraEl);
+  foot.append(btn);
+  setTimeout(()=>{try{inp.focus()}catch(e){}},50);
+}
+const EX={
+  teach(ex,stage,foot){
+    const it=ex.item;
+    stage.append(h('p',{class:'ask'},'Reprenons ce mot, tu as hésité'),h('div',{class:'prompt'},it.t,speakBtn(it.t,S.course)),h('p',{class:'note big2'},it.f),h('p',{class:'sub'},'Dis-le à voix haute deux fois, puis continue. Il reviendra juste après.'));
+    foot.append(nextBtn());
+    setTimeout(()=>say(it.t,1,S.course),300);
+  },
+  mc(ex,stage,foot){
+    const it=ex.item,tf=ex.dir==='tf';
+    const ans=tf?it.f:it.t;
+    const others=[...new Set(S.pool.filter(x=>x.id!==it.id).map(x=>tf?x.f:x.t).filter(x=>x!==ans))];
+    const opts=shuffle([ans,...shuffle(others).slice(0,3)]);
+    stage.append(
+      h('p',{class:'ask'},tf?'Traduis en français':'Traduis en '+S.course.name.toLowerCase()),
+      h('div',{class:'prompt'},tf?it.t:it.f,tf?speakBtn(it.t,S.course):null),
+      optsEl(opts,ans,ex,foot));
+  },
+  type(ex,stage,foot){
+    textExercise(ex,stage,foot,'Écris en '+S.course.name.toLowerCase(),h('div',{class:'prompt'},ex.item.f));
+  },
+  dictation(ex,stage,foot){
+    const it=ex.item;
+    textExercise(ex,stage,foot,'Écris ce que tu entends',
+      h('div',{class:'row'},
+        h('button',{class:'big-spk sm','aria-label':'Écouter',onclick:()=>say(it.t,1,S.course)},'🔊'),
+        h('button',{class:'big-spk sm slow','aria-label':'Écouter lentement',onclick:()=>say(it.t,.7,S.course)},'🐢')),
+      h('button',{class:'link',onclick:skipListening},'Je n\'entends rien — passer l\'écoute'));
+    setTimeout(()=>say(it.t,1,S.course),300);
+  },
+  build(ex,stage,foot){
+    const it=ex.item,words=it.t.split(/\s+/);
+    let order,tries=0;
+    do{order=shuffle(words.map((w,i)=>i));tries++}while(order.every((v,i)=>v===i)&&tries<10);
+    const chosen=[];let done=false;
+    const ans=h('div',{class:'ans'}),bank=h('div',{class:'bank'});
+    const btn=h('button',{class:'btn wide',disabled:'',onclick:check},'Vérifier');
+    function draw(){
+      ans.replaceChildren(...chosen.map(i=>h('button',{class:'tile',onclick:()=>{if(done)return;chosen.splice(chosen.indexOf(i),1);draw()}},words[i])));
+      bank.replaceChildren(...order.map(i=>chosen.includes(i)?h('span',{class:'tile ghostt'},words[i]):h('button',{class:'tile',onclick:()=>{if(done)return;chosen.push(i);draw()}},words[i])));
+      btn.disabled=chosen.length===0;
+    }
+    function check(){
+      if(done||!chosen.length)return;
+      done=true;
+      const ok=norm(chosen.map(i=>words[i]).join(' '))===norm(it.t);
+      resolve(ex,ok,foot);
+    }
+    stage.append(h('p',{class:'ask'},'Remets la phrase dans l\'ordre en '+S.course.name.toLowerCase()),h('div',{class:'prompt'},it.f),ans,bank);
+    foot.append(btn);
+    draw();
+  },
+  cloze(ex,stage,foot){
+    const it=ex.item,toks=it.t.split(' ');
+    const core=w=>w.replace(/^[¿¡"]+|[.,?!"]+$/g,'');
+    const isCap=w=>/^[A-ZÁÉÍÓÚÑÀÈÌÒÙ]/.test(w);
+    const cand=toks.map((w,i)=>i).filter(i=>i>0&&core(toks[i]).length>=4);
+    if(!cand.length)return EX.type(ex,stage,foot);
+    const bi=cand[Math.floor(Math.random()*cand.length)];
+    const ans=core(toks[bi]);
+    const words=[];
+    S.pool.forEach(x=>x.t.split(' ').forEach((w,i)=>{const c=core(w);if(i>0&&c.length>=3&&c.toLowerCase()!==ans.toLowerCase()&&isCap(c)===isCap(ans))words.push(c)}));
+    const dist=shuffle([...new Set(words)]).slice(0,3);
+    if(dist.length<2)return EX.type(ex,stage,foot);
+    const sentence=toks.map((w,i)=>i===bi?w.replace(ans,'_____'):w).join(' ');
+    stage.append(
+      h('p',{class:'ask'},'Complète la phrase'),
+      h('div',{class:'prompt sm'},sentence),
+      h('p',{class:'sub'},it.f),
+      optsEl(shuffle([ans,...dist]),ans,ex,foot));
+  },
+  match(ex,stage,foot){
+    const its=ex.items;
+    let sel=null,left=its.length,errs=0;
+    const lb=[];
+    const wrapL=h('div',{class:'col'}),wrapR=h('div',{class:'col'});
+    function end(){
+      if(errs)S.miss++;else S.first++;
+      foot.className='foot '+(errs?'bad':'ok');
+      foot.replaceChildren(h('div',{class:'msg'},h('b',{},errs?'Terminé, avec quelques erreurs':'Parfait !')),nextBtn());
+    }
+    function pick(b,side){
+      if(b.disabled)return;
+      if(side==='l'){lb.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sel=b;say(b._it.t,1,S.course);return}
+      if(!sel)return;
+      const a=sel;sel=null;a.classList.remove('sel');
+      if(a._it===b._it){a.classList.add('good');b.classList.add('good');a.disabled=b.disabled=true;bump(a._it,true);left--;if(!left)end()}
+      else{errs++;bump(a._it,false);S.missed.set(a._it.id,a._it);a.classList.add('wrong');b.classList.add('wrong');setTimeout(()=>{a.classList.remove('wrong');b.classList.remove('wrong')},500)}
+    }
+    shuffle(its).forEach(it=>{const b=h('button',{class:'opt sm'},it.t);b._it=it;b.addEventListener('click',()=>pick(b,'l'));lb.push(b);wrapL.append(b)});
+    shuffle(its).forEach(it=>{const b=h('button',{class:'opt sm'},it.f);b._it=it;b.addEventListener('click',()=>pick(b,'r'));wrapR.append(b)});
+    stage.append(h('p',{class:'ask'},'Associe chaque mot à sa traduction : touche d\'abord à gauche, puis à droite.'),h('div',{class:'cols'},wrapL,wrapR));
+  },
+  listen(ex,stage,foot){
+    const it=ex.item;
+    const others=[...new Set(S.pool.filter(x=>x.id!==it.id&&x.t!==it.t).map(x=>x.t))];
+    stage.append(
+      h('p',{class:'ask'},'Écoute, puis choisis ce que tu entends'),
+      h('div',{class:'row'},
+        h('button',{class:'big-spk','aria-label':'Écouter',onclick:()=>say(it.t,1,S.course)},'🔊'),
+        h('button',{class:'big-spk slow','aria-label':'Écouter lentement',onclick:()=>say(it.t,.7,S.course)},'🐢')),
+      optsEl(shuffle([it.t,...shuffle(others).slice(0,3)]),it.t,ex,foot),
+      h('button',{class:'link',onclick:skipListening},'Je n\'entends rien — passer l\'écoute'));
+    setTimeout(()=>say(it.t,1,S.course),300);
+  },
+  listenfr(ex,stage,foot){
+    const it=ex.item;
+    const others=[...new Set(S.pool.filter(x=>x.id!==it.id&&x.f!==it.f).map(x=>x.f))];
+    stage.append(
+      h('p',{class:'ask'},'Écoute, puis choisis la traduction'),
+      h('div',{class:'row'},
+        h('button',{class:'big-spk','aria-label':'Écouter',onclick:()=>say(it.t,1,S.course)},'🔊'),
+        h('button',{class:'big-spk slow','aria-label':'Écouter lentement',onclick:()=>say(it.t,.7,S.course)},'🐢')),
+      optsEl(shuffle([it.f,...shuffle(others).slice(0,3)]),it.f,ex,foot),
+      h('button',{class:'link',onclick:skipListening},'Je n\'entends rien — passer l\'écoute'));
+    setTimeout(()=>say(it.t,1,S.course),300);
+  },
+  speak(ex,stage,foot){
+    const it=ex.item,c=S.course;
+    let done=false;
+    const fixed=()=>{
+      done=true;
+    };
+    const area=h('div',{class:'speakarea'});
+    function selfMode(note){
+      area.replaceChildren(
+        h('p',{class:'sub'},note||'Dis la phrase à voix haute, puis évalue-toi honnêtement.'),
+        h('div',{class:'row wrap'},
+          h('button',{class:'btn ghost',onclick:()=>{if(done)return;fixed();resolve(ex,false,foot,'À retravailler : réécoute et répète plusieurs fois.')}},'😕 À retravailler'),
+          h('button',{class:'btn',onclick:()=>{if(done)return;fixed();resolve(ex,true,foot)}},'✅ Bien dit')));
+    }
+    stage.append(
+      h('p',{class:'ask'},'Répète à voix haute'),
+      h('div',{class:'prompt'},it.t,speakBtn(it.t,c)),
+      h('p',{class:'sub'},it.f),
+      area,
+      h('button',{class:'link',onclick:skipCurrent},'Passer cet exercice'));
+    if(micAvailable()){
+      const w=micWidget(c,(text,fatal)=>{
+        if(fatal){selfMode('Micro indisponible ici : évalue-toi toi-même.');return}
+        if(done||!text)return;
+        // évaluation après chaque pause : on laisse l'élève valider
+      });
+      const check=h('button',{class:'btn wide',onclick:()=>{
+        if(done)return;
+        const t=w.text();
+        if(!t){return}
+        fixed();
+        const sc=similarity(t,it.t);
+        resolve(ex,sc>=.75,foot,'Tu as dit : « '+t+' » ('+Math.round(sc*100)+' % de correspondance)');
+      }},'Valider ma prononciation');
+      area.append(w.el,check);
+    }else selfMode();
+    setTimeout(()=>say(it.t,1,c),300);
+  }
+};
+
+/* ---------- résultat ---------- */
+function resultScreen(){
+  const acc=S.initial>0?Math.round(S.first/S.initial*100):100;
+  if(S.mode==='lesson'){const k=store.course+':'+S.ui;store.done[k]=Math.max(store.done[k]||0,acc);if(acc<75)store.reinforce[k]=acc;else delete store.reinforce[k]}
+  S.items.forEach(it=>{
+    const s=store.srs[it.id]||{b:0,d:0};
+    if(S.missed.has(it.id)){s.b=0;s.d=today()}
+    else{s.b=Math.min(INT.length-1,s.b+1);s.d=today()+INT[s.b]}
+    store.srs[it.id]=s;
+    if(s.b>=3&&!store.learned[it.id])store.learned[it.id]=today();
+    if(s.b>=4&&store.stats[it.id])store.stats[it.id].ko=0;
+  });
+  save();
+  const missed=[...S.missed.values()];
+  app.replaceChildren(
+    h('div',{class:'stage res'},
+      h('h2',{},S.mode==='review'?'Révision terminée':S.mode==='weak'?'Rattrapage terminé':'Leçon terminée'),
+      h('div',{class:'big'},acc+' %'),
+      h('p',{class:'sub'},'de réussite du premier coup'),
+      acc<75&&S.mode==='lesson'?h('p',{class:'note'},'Tu as eu du mal sur cette unité : elle est marquée « à renforcer » et l\'appli te la reproposera. Les mots difficiles reviendront dans « Mes points faibles ».'):null,
+      missed.length?h('div',{class:'miss'},h('b',{},'À retenir :'),missed.map(it=>h('div',{class:'vrow'},h('div',{},h('b',{},it.t),h('span',{},it.f)),speakBtn(it.t,S.course)))):h('p',{},'Aucune erreur, bravo.'),
+      h('p',{class:'sub'},missed.length?'Ces mots reviendront dans ta révision du jour.':'Ces mots reviendront en révision dans quelques jours, pour bien les fixer.')),
+    h('div',{class:'foot'},
+      h('button',{class:'btn wide',onclick:homeScreen},'Retour aux leçons'),
+      S.mode==='lesson'?h('button',{class:'btn wide ghost',onclick:()=>startLesson('lesson',S.ui)},'Refaire la leçon'):null)
+  );
+  window.scrollTo(0,0);
+}
+
+/* ---------- bac blanc d'italien ---------- */
+const IT=COURSES.it;
+let B=null;
+function timerEl(seconds){
+  const el=h('div',{class:'timer'},'');let left=seconds;
+  const upd=()=>{const a=Math.abs(left),m=Math.floor(a/60),s=a%60;el.textContent=(left<0?'+':'')+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');el.classList.toggle('over',left<0)};
+  upd();
+  const iv=setInterval(()=>{if(!el.isConnected){clearInterval(iv);return}left--;upd()},1000);
+  return {el,left:()=>left,stop:()=>clearInterval(iv)};
+}
+function pickSubject(kind){
+  const n=BAC[kind].length;let seen=store.bac.seen[kind]||[];
+  let avail=[...Array(n).keys()].filter(i=>!seen.includes(i));
+  if(!avail.length){seen=[];avail=[...Array(n).keys()]}
+  const i=avail[Math.floor(Math.random()*avail.length)];
+  seen.push(i);store.bac.seen[kind]=seen;save();
+  return i;
+}
+const PART_NAME={co:'Compréhension orale',ce:'Compréhension écrite',ee:'Expression écrite',eo:'Expression orale'};
+function bacScreen(){
+  stopSpeak();B=null;
+  const hist=store.bac.hist.slice(-6).reverse();
+  const card=(t,s,f)=>h('div',{class:'card dcard'},h('div',{class:'ct'},h('b',{},t),h('span',{},s)),h('button',{class:'btn',onclick:f},'Commencer'));
+  app.replaceChildren(
+    bar(homeScreen,'Bac blanc · Italien'),
+    h('div',{class:'stage scroll'},
+      h('p',{class:'note'},'Entraînement type bac : compréhension orale (CO), compréhension écrite (CE), expression écrite (EE) et expression orale (EO). Le format reprend l\'esprit des épreuves, mais les durées et barèmes officiels peuvent différer : vérifie les consignes de ta session. Les notes affichées sont des estimations.'),
+      card('Épreuve écrite complète','CO + CE + EE · environ 1 h 30',()=>startBac('written')),
+      card('Épreuve orale complète','Préparation 10 min · exposé 5 min · entretien 5 min',()=>startBac('oral')),
+      h('h3',{class:'lvl'},'S\'entraîner par compétence'),
+      h('div',{class:'grid2'},['co','ce','ee','eo'].map(k=>h('button',{class:'btn ghost',onclick:()=>startBac(k)},PART_NAME[k]))),
+      hist.length?h('h3',{class:'lvl'},'Dernières séances'):null,
+      hist.map(x=>h('div',{class:'vrow'},h('div',{},h('b',{},({written:'Écrit complet',oral:'Oral complet',co:'CO',ce:'CE',ee:'EE',eo:'EO'})[x.kind]),h('span',{},'estimation sur 20')),h('b',{},x.score+' / 20'))))
+  );
+  window.scrollTo(0,0);
+}
+function startBac(kind){
+  const parts=kind==='written'?['co','ce','ee']:kind==='oral'?['eo']:[kind];
+  B={kind,parts,pi:0,res:{}};
+  runPart();
+}
+function runPart(){
+  const p=B.parts[B.pi],item=BAC[p][pickSubject(p)];
+  const fin=(score,info)=>{B.res[p]={score,info};B.pi++;if(B.pi<B.parts.length)runPart();else bacResult()};
+  const title='Bac blanc · '+PART_NAME[p]+(B.parts.length>1?' ('+(B.pi+1)+'/'+B.parts.length+')':'');
+  ({co:coScreen,ce:ceScreen,ee:eeScreen,eo:eoScreen})[p](item,fin,title);
+  window.scrollTo(0,0);
+}
+function bacResult(){
+  stopSpeak();
+  const keys=Object.keys(B.res),avg=Math.round(keys.reduce((s,k)=>s+B.res[k].score,0)/keys.length*10)/10;
+  store.bac.hist.push({d:today(),kind:B.kind,score:avg});store.bac.hist=store.bac.hist.slice(-30);save();
+  const kind=B.kind;
+  app.replaceChildren(
+    h('div',{class:'stage res'},
+      h('h2',{},'Bac blanc terminé'),
+      h('div',{class:'big'},avg+' / 20'),
+      h('p',{class:'sub'},'estimation indicative, pas une note officielle'),
+      h('div',{class:'miss'},keys.map(k=>h('div',{class:'vrow'},h('div',{},h('b',{},PART_NAME[k])),h('b',{},B.res[k].score+' / 20'))))),
+    h('div',{class:'foot'},
+      h('button',{class:'btn wide',onclick:bacScreen},'Retour au bac blanc'),
+      h('button',{class:'btn wide ghost',onclick:()=>startBac(kind)},'Refaire avec un autre sujet'))
+  );
+  window.scrollTo(0,0);
+}
+function qcmBlock(qs){
+  const state=qs.map(q=>({opts:shuffle(q.o.map((t,i)=>({t,ok:i===q.a}))),pick:-1,locked:false,btns:[]}));
+  let onChange=()=>{};
+  const upd=()=>onChange(state.every(s=>s.pick>=0));
+  const els=state.map((s,qi)=>{
+    const wrap=h('div',{class:'opts'});
+    s.btns=s.opts.map((o,oi)=>{const b=h('button',{class:'opt',onclick:()=>{if(s.locked)return;s.pick=oi;s.btns.forEach((x,k)=>x.classList.toggle('sel',k===oi));upd()}},o.t);wrap.append(b);return b});
+    return h('div',{class:'qb'},h('b',{},(qi+1)+'. '+qs[qi].q),wrap);
+  });
+  return {el:h('div',{},els),setOnChange:f=>{onChange=f},
+    reveal(){state.forEach(s=>{s.locked=true;s.btns.forEach((b,k)=>{b.disabled=true;b.classList.remove('sel');if(s.opts[k].ok)b.classList.add('good');else if(k===s.pick)b.classList.add('wrong')})});return state.filter(s=>s.pick>=0&&s.opts[s.pick].ok).length}};
+}
+function gridEl(crit,max){
+  const vals=crit.map(()=>Math.round(max*.6));
+  const outs=crit.map((c,i)=>h('b',{},vals[i]+' / '+max));
+  const el=h('div',{class:'grid'},crit.map((c,i)=>h('label',{class:'set'},h('span',{},c+' '),outs[i],h('input',{type:'range',min:'0',max:String(max),step:'1',value:String(vals[i]),oninput:e=>{vals[i]=parseInt(e.target.value,10);outs[i].textContent=vals[i]+' / '+max;tot.textContent='Total : '+total()+' / '+(max*crit.length)}}))));
+  const total=()=>vals.reduce((a,b)=>a+b,0);
+  const tot=h('b',{class:'center'},'Total : '+total()+' / '+(max*crit.length));
+  return {el:h('div',{},el,tot),total,set:(arr)=>{arr.forEach((v,i)=>{v=Math.max(0,Math.min(max,Math.round(Number(v)||0)));vals[i]=v;const inp=el.querySelectorAll('input')[i];inp.value=String(v);outs[i].textContent=v+' / '+max});tot.textContent='Total : '+total()+' / '+(max*crit.length)}};
+}
+const VOICE_AB=s=>s==='A'?{voice:'buttery',pitch:1}:{voice:'airy',pitch:1.25};
+function coScreen(item,fin,title){
+  const MAX=3;let plays=0,playing=false,run=0;
+  const btn=h('button',{class:'btn wide'},'▶ Écouter le document ('+MAX+' écoutes)');
+  const status=h('div',{class:'sub center'},'Écoute attentivement, puis réponds aux questions.');
+  const script=h('div',{class:'script hidden'},item.script.map(l=>h('p',{},(item.script.length>1?l[0]+' : ':'')+l[1])));
+  const q=qcmBlock(item.qs);
+  const submit=h('button',{class:'btn wide',disabled:''},'Valider mes réponses');
+  if(!audioPossible()){status.textContent='Audio indisponible ici : lis la transcription ci-dessous (entraînement CE).';script.classList.remove('hidden');btn.disabled=true}
+  btn.addEventListener('click',async()=>{
+    if(playing){run++;stopSpeak();playing=false;btn.textContent='▶ Écouter le document ('+(MAX-plays)+' restantes)';return}
+    if(plays>=MAX)return;
+    plays++;playing=true;const my=++run;btn.textContent='■ Arrêter';status.textContent='Écoute '+plays+' / '+MAX;
+    for(let i=0;i<item.script.length&&my===run;i++){await speakAsync(item.script[i][1],IT,VOICE_AB(item.script[i][0]));if(my!==run)return;await sleep(400)}
+    if(my===run){playing=false;btn.textContent=plays>=MAX?'Écoutes terminées':'▶ Réécouter ('+(MAX-plays)+' restantes)';btn.disabled=plays>=MAX;status.textContent=plays>=MAX?'Réponds maintenant aux questions.':'Tu peux réécouter.'}
+  });
+  q.setOnChange(ok=>{submit.disabled=!ok});
+  submit.addEventListener('click',()=>{
+    run++;stopSpeak();
+    const good=q.reveal(),score=Math.round(good/item.qs.length*20);
+    script.classList.remove('hidden');submit.replaceWith(h('div',{class:'resbox'},h('b',{},good+' / '+item.qs.length+' bonnes réponses · '+score+' / 20'),h('button',{class:'btn wide',onclick:()=>fin(score,{good})},B.pi+1<B.parts.length?'Partie suivante →':'Terminer')));
+  });
+  app.replaceChildren(bar(()=>{run++;stopSpeak();bacScreen()},title),
+    h('div',{class:'stage scroll'},h('h2',{},item.t),h('p',{class:'sub'},'Niveau '+item.niv+' · questions en français'),btn,status,q.el,submit,h('h3',{class:'lvl'},'Transcription'),script));
+}
+function ceScreen(item,fin,title){
+  const tm=timerEl(25*60);
+  const q=qcmBlock(item.qs);
+  const submit=h('button',{class:'btn wide',disabled:''},'Valider mes réponses');
+  q.setOnChange(ok=>{submit.disabled=!ok});
+  submit.addEventListener('click',()=>{
+    tm.stop();
+    const good=q.reveal(),score=Math.round(good/item.qs.length*20);
+    submit.replaceWith(h('div',{class:'resbox'},h('b',{},good+' / '+item.qs.length+' bonnes réponses · '+score+' / 20'),h('button',{class:'btn wide',onclick:()=>fin(score,{good})},B.pi+1<B.parts.length?'Partie suivante →':'Terminer')));
+  });
+  app.replaceChildren(bar(()=>{tm.stop();bacScreen()},title),
+    h('div',{class:'stage scroll'},h('div',{class:'row between'},h('h2',{},item.t),tm.el),h('p',{class:'sub'},'Niveau '+item.niv+' · temps conseillé : 25 min'),
+      h('div',{class:'text'},item.text.split('\n\n').map(p=>h('p',{},p),audioPossible()?null:null)),
+      audioPossible()?h('div',{class:'row'},h('button',{class:'btn ghost',onclick:()=>say(item.text.replace(/\n\n/g,' '),1,IT)},'🔊 Écouter le texte (entraîne l\'oral)')):null,
+      q.el,submit));
+}
+const CONN_RE=/\b(prima di tutto|innanzitutto|inoltre|tuttavia|infatti|per esempio|da una parte|dall'altra|secondo me|a mio avviso|quindi|dunque|in conclusione|per concludere|però|perché|poi|alla fine|ad un tratto|invece|anche se|mentre|quando)\b/gi;
+function connCount(t){const m=(t.match(CONN_RE)||[]).map(x=>x.toLowerCase());return [...new Set(m)]}
+function eeScreen(item,fin,title){
+  const tm=timerEl(45*60);
+  const ta=h('textarea',{class:'ta',rows:'12',placeholder:'Écris ta production en italien…',spellcheck:'false',autocapitalize:'sentences'});
+  const wc=h('div',{class:'sub'},'');
+  const nWords=()=>ta.value.trim()?ta.value.trim().split(/\s+/).length:0;
+  const count=()=>{const n=nWords();wc.textContent=n+' mots (objectif : '+item.min+' à '+item.max+')';wc.className='sub '+(n>=item.min&&n<=item.max?'okc':n>item.max?'warn':'')};
+  ta.addEventListener('input',count);count();
+  const chars=h('div',{class:'chars'},IT.chars.map(ch=>h('button',{onclick:()=>{ta.value+=ch;ta.dispatchEvent(new Event('input'));ta.focus()}},ch)));
+  const aide=h('details',{},h('summary',{},'Aide : structures et connecteurs'),h('ul',{},item.aide.concat(CONN).map(x=>h('li',{},x))));
+  const done=h('button',{class:'btn wide',onclick:review},'Terminer et corriger');
+  const root=h('div',{class:'stage scroll'},
+    h('div',{class:'row between'},h('h2',{},item.t),tm.el),
+    h('div',{class:'note'},h('b',{},'Sujet. '),item.cons,h('p',{class:'tt'},item.it)),
+    aide,ta,chars,wc,done);
+  app.replaceChildren(bar(()=>{tm.stop();bacScreen()},title),root);
+  function review(){
+    tm.stop();ta.readOnly=true;chars.remove();done.remove();
+    const n=nWords(),cn=connCount(ta.value);
+    const fbBox=h('div',{class:'fbbox'},'');
+    const grid=gridEl(['Réalisation de la tâche','Cohérence et organisation','Lexique','Grammaire et orthographe'],5);
+    const askBtn=capSample?h('button',{class:'btn wide ghost',onclick:async()=>{
+      askBtn.disabled=true;
+      const prompt='Tu es examinateur de langue italienne au baccalauréat français (niveau B1). Corrige la production écrite d\'un élève.\nSujet (italien) : '+item.it+'\nSujet (français) : '+item.cons+'\nLongueur attendue : '+item.min+' à '+item.max+' mots.\nProduction de l\'élève :\n"""\n'+ta.value+'\n"""\nRéponds uniquement par un JSON de la forme {"note_sur_20":number,"criteres":{"tache":0-5,"coherence":0-5,"lexique":0-5,"grammaire":0-5},"points_forts":["..."],"erreurs":[{"extrait":"...","correction":"...","explication":"... en français"}],"version_amelioree":"texte italien corrigé","conseils":["..."]}. Maximum 8 erreurs, les plus importantes. Explications bienveillantes et en français.';
+      const r=await askClaude(prompt,fbBox);
+      askBtn.disabled=false;
+      if(r){renderFeedback(fbBox,r);if(r.criteres)grid.set([r.criteres.tache,r.criteres.coherence,r.criteres.lexique,r.criteres.grammaire])}
+    }},'🤖 Faire corriger par Claude'):null;
+    root.append(
+      h('div',{class:'resbox'},h('b',{},'Bilan automatique'),
+        h('p',{class:'sub'},n+' mots · '+(n>=item.min&&n<=item.max?'longueur conforme':n<item.min?'texte trop court':'texte trop long')),
+        h('p',{class:'sub'},'Connecteurs repérés : '+(cn.length?cn.join(', '):'aucun (pense à structurer)'))),
+      askBtn,fbBox,
+      h('details',{},h('summary',{},'Voir un modèle de réponse'),h('p',{class:'model'},item.mod)),
+      h('h3',{class:'lvl'},'Ma grille d\'évaluation'),
+      h('p',{class:'sub'},'Évalue-toi (ou reprends la proposition de Claude) : 5 points par critère.'),
+      grid.el,
+      h('button',{class:'btn wide',onclick:()=>fin(grid.total(),{words:n})},B.pi+1<B.parts.length?'Valider et continuer →':'Valider ma note'));
+    window.scrollTo(0,0);
+  }
+}
+function eoScreen(item,fin,title){
+  const st={speech:'',answers:[],qi:0,notes:''};
+  let tm=null;
+  const root=h('div',{class:'stage scroll'});
+  const back=()=>{if(tm)tm.stop();stopSpeak();bacScreen()};
+  app.replaceChildren(bar(back,title),root);
+  const docBox=()=>h('div',{class:'note'},h('b',{},item.t),h('p',{class:'tt'},item.doc),h('p',{class:'sub'},'Consigne : '+item.cons));
+  function prep(){
+    tm=timerEl(10*60);
+    const ta=h('textarea',{class:'ta',rows:'6',placeholder:'Mes notes (idées, plan, mots utiles)…',spellcheck:'false'});
+    ta.addEventListener('input',()=>{st.notes=ta.value});
+    root.replaceChildren(
+      h('div',{class:'row between'},h('h2',{},'Préparation'),tm.el),
+      h('p',{class:'sub'},'Lis le document, prépare ton plan (introduction, 2-3 idées, avis personnel, conclusion). 10 minutes conseillées.'),
+      docBox(),
+      audioPossible()?h('div',{class:'row'},h('button',{class:'btn ghost',onclick:()=>say(item.doc,1,IT)},'🔊 Écouter le document')):null,
+      h('details',{},h('summary',{},'Aide : connecteurs et opinions'),h('ul',{},CONN.concat(OPIN).map(x=>h('li',{},x)))),
+      ta,
+      h('button',{class:'btn wide',onclick:()=>{tm.stop();speech()}},'Je suis prêt(e) : passer à l\'exposé →'));
+  }
+  function speech(){
+    tm=timerEl(5*60);
+    const w=micAvailable()?micWidget(IT,t=>{st.speech=t}):null;
+    root.replaceChildren(
+      h('div',{class:'row between'},h('h2',{},'Exposé (5 min)'),tm.el),
+      h('p',{class:'sub'},'Présente le document, développe tes idées puis donne ton avis. Parle à voix haute, sans lire tes notes.'),
+      h('details',{},h('summary',{},'Revoir le document et mes notes'),docBox(),h('p',{class:'sub'},st.notes||'(pas de notes)')),
+      w?w.el:h('p',{class:'note'},'La transcription n\'est pas disponible ici : parle à voix haute (idéalement en t\'enregistrant avec ton téléphone) et évalue-toi à la fin.'),
+      h('button',{class:'btn wide',onclick:()=>{tm.stop();talk()}},'Terminer l\'exposé → entretien'));
+  }
+  function talk(){
+    if(st.qi===0)tm=timerEl(5*60);
+    if(st.qi>=item.qs.length){tm.stop();review();return}
+    const qn=item.qs[st.qi];
+    const w=micAvailable()?micWidget(IT,t=>{st.answers[st.qi]=t}):null;
+    root.replaceChildren(
+      h('div',{class:'row between'},h('h2',{},'Entretien'),tm.el),
+      h('p',{class:'sub'},'Question '+(st.qi+1)+' / '+item.qs.length+' · l\'examinateur te parle'),
+      h('div',{class:'note'},h('p',{class:'tt big2'},qn)),
+      audioPossible()?h('div',{class:'row'},h('button',{class:'btn ghost',onclick:()=>say(qn,1,IT)},'🔊 Réécouter la question'),h('button',{class:'btn ghost',onclick:()=>say(qn,.7,IT)},'🐢 Plus lentement')):null,
+      w?w.el:h('p',{class:'sub'},'Réponds à voix haute (30 secondes à 1 minute).'),
+      h('button',{class:'btn wide',onclick:()=>{st.qi++;talk()}},st.qi+1<item.qs.length?'Question suivante →':'Terminer l\'entretien'));
+    setTimeout(()=>say(qn,1,IT),300);
+  }
+  function review(){
+    const all=[st.speech].concat(st.answers.filter(Boolean)).join(' ').trim();
+    const fbBox=h('div',{class:'fbbox'},'');
+    const grid=gridEl(['Contenu et organisation','Lexique','Grammaire','Prononciation et intonation','Aisance et interaction'],4);
+    const cn=connCount(all);
+    const askBtn=capSample&&all?h('button',{class:'btn wide ghost',onclick:async()=>{
+      askBtn.disabled=true;
+      const prompt='Tu es examinateur de langue italienne au baccalauréat français (niveau B1). Voici la transcription automatique, parfois imparfaite, de l\'exposé et de l\'entretien oral d\'un élève. Ne pénalise pas les erreurs de transcription ni la ponctuation.\nDocument : '+item.doc+'\nConsigne : '+item.cons+'\nExposé : '+(st.speech||'(non transcrit)')+'\nEntretien :\n'+item.qs.map((q,i)=>'Q : '+q+'\nR : '+(st.answers[i]||'(non transcrit)')).join('\n')+'\nRéponds uniquement par un JSON {"note_sur_20":number,"points_forts":["..."],"erreurs":[{"extrait":"...","correction":"...","explication":"... en français"}],"version_amelioree":"une meilleure version de l\'exposé en italien, 80 à 120 mots","conseils":["..."]}. Maximum 8 erreurs. Explications bienveillantes et en français.';
+      const r=await askClaude(prompt,fbBox);askBtn.disabled=false;
+      if(r)renderFeedback(fbBox,r);
+    }},'🤖 Faire analyser par Claude'):null;
+    root.replaceChildren(
+      h('h2',{},'Bilan de l\'oral'),
+      st.speech||st.answers.some(Boolean)?h('div',{class:'resbox'},h('b',{},'Ce que j\'ai entendu'),h('p',{class:'sub'},'Exposé : '+(st.speech||'—')),st.answers.map((a,i)=>a?h('p',{class:'sub'},'Q'+(i+1)+' : '+a):null),h('p',{class:'sub'},'Connecteurs repérés : '+(cn.length?cn.join(', '):'aucun'))):h('p',{class:'note'},'Pas de transcription disponible : utilise la grille pour t\'évaluer.'),
+      askBtn,fbBox,
+      h('h3',{class:'lvl'},'Ma grille d\'évaluation'),
+      h('p',{class:'sub'},'Évalue-toi honnêtement : 4 points par critère.'),
+      grid.el,
+      h('button',{class:'btn wide',onclick:()=>fin(grid.total(),{})},'Valider ma note'));
+    window.scrollTo(0,0);
+  }
+  prep();
+}
+
+boot();
+
+;if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
